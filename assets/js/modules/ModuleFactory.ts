@@ -1,8 +1,8 @@
 import {Module, ModuleType} from "./Module";
-import {TradingModule} from "../TradingViewModule";
-import {IframeModule} from "../IframeModule";
-import {TwitterModule} from "../TwitterModule";
-import {Option} from "./Option";
+import {TradingModule} from "./TradingViewModule";
+import {IframeModule} from "./IframeModule";
+import {TwitterModule} from "./TwitterModule";
+import {Option} from "../Option";
 
 export class ModuleFactory{
 	

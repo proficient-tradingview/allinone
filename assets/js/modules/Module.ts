@@ -1,6 +1,6 @@
 
-import {Uuid} from "./uuid";
-import {Option} from "./Option";
+import {Uuid} from "../uuid";
+import {Option} from "../Option";
 
 export type ModuleType = 'twitter'|'tradingview'|'iframe';
 

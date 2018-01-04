@@ -1,4 +1,4 @@
-define(["require", "exports", "../TradingViewModule", "../IframeModule", "../TwitterModule"], function (require, exports, TradingViewModule_1, IframeModule_1, TwitterModule_1) {
+define(["require", "exports", "./TradingViewModule", "./IframeModule", "./TwitterModule"], function (require, exports, TradingViewModule_1, IframeModule_1, TwitterModule_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var ModuleFactory = (function () {

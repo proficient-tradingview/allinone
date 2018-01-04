@@ -1,5 +1,5 @@
-import {Module} from "./js/Module";
-import {Option, OptionValueLabel} from "./js/Option";
+import {Module} from "./Module";
+import {Option, OptionValueLabel} from "../Option";
 
 export class IframeModule extends Module{
 

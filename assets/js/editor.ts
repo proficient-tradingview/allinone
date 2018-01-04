@@ -1,12 +1,12 @@
 import {VueClass, VueComputed, VueVar, VueWatched} from "./VueAnnotate";
 import {Uuid} from "./uuid";
-import {Module, ModuleType} from "./Module";
+import {Module, ModuleType} from "./modules/Module";
 import {Option} from "./Option";
-import {TradingModule} from "../TradingViewModule";
-import {TwitterModule} from "../TwitterModule";
-import {IframeModule} from "../IframeModule";
+import {TradingModule} from "./modules/TradingViewModule";
+import {TwitterModule} from "./modules/TwitterModule";
+import {IframeModule} from "./modules/IframeModule";
 import Utils from "./Utils";
-import {ModuleFactory} from "./ModuleFactory";
+import {ModuleFactory} from "./modules/ModuleFactory";
 
 
 

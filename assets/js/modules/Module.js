@@ -1,4 +1,4 @@
-define(["require", "exports", "./uuid"], function (require, exports, uuid_1) {
+define(["require", "exports", "../uuid"], function (require, exports, uuid_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Module = (function () {
