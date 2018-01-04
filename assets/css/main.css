@@ -1,0 +1,60 @@
+.row{
+}
+.cell{
+	display:inline-block !important;
+	/*height: 100% !important;*/
+	vertical-align: top !important;
+	overflow: auto !important;
+	position: absolute !important;
+	margin:0 !important;
+	padding:0 !important;
+}
+.cell.full{
+	position: fixed !important;
+	top:0;left:0;
+	width:100% !important;	height:100% !important;
+	z-index: 5;
+}
+
+.cell .actions{
+	position: absolute;
+	bottom:10px;
+	right:10px;
+}
+.cell .actions span{
+	margin:0 !important;
+	padding:3px !important;
+}
+
+.clickToAdd span{
+	position: absolute;
+	top:50%;
+	display: block;
+	text-align: center;
+	width:100%;
+}
+.clickToAdd:hover{
+	background: #4a4a4a;
+}
+
+.setting-icon{
+	height: 1em;
+	display: block;
+	font-size: 1.71428571em!important;
+	margin: 0 auto .5rem!important;
+}
+
+#app{
+	height:100%;
+	position: relative;
+	margin-bottom:0;
+}
+
+#app .openSidebar{
+	position: absolute;
+	top:0;
+	z-index: 5555;
+	font-size:10px;
+	padding:5px;
+	background:gray;
+}

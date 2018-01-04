@@ -2,9 +2,203 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>AllInOne app</title>
+	<title>AllInOne</title>
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.css" >
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" >
+	<link rel="stylesheet" href="assets/css/main.css" >
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+	<script src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+	<!-- TradingView Widget BEGIN -->
+	<script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+
 </head>
 <body>
-<h1>AllInOne</h1>
+
+<div id="app" class="ui bottom attached segment pushable">
+
+	<div class="ui modal" id="settingsModal">
+		<i class="close icon"></i>
+		<div class="header">
+			AllInOne
+		</div>
+		<div class="content">
+			<div class="ui grid" >
+				<div class="eight wide column" >
+					<h2 class="ui dividing header">Settings</h2>
+					<form class="ui form">
+						<h4 class="ui dividing header">Grid size</h4>
+						<div class="field">
+							<div class="two fields">
+								<div class="field">
+									<label>Width</label>
+									<select v-model="gridWidth" >
+										<option v-for="i in gridMaxWidth" >{{i}}</option>
+									</select>
+								</div>
+								<div class="field">
+									<label>Height</label>
+									<select v-model="gridHeight" >
+										<option v-for="i in gridMaxHeight" >{{i}}</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="eight wide column" >
+					<h2 class="ui dividing header">Donate & Help</h2>
+					<p>
+						The code is all open source but developing this site takes time.<br/>
+						You can find the code on <a href="" >Github</a><br/>
+						<br/>
+						Features / Bugs? Email: minerfromashes@gmail.com or on <a href="" >Github</a><br/>
+						<br/>
+						Here are ways you can support me by donating or using referral link<br/><br/>
+					</p>
+					<h3>Referral</h3>
+					<h4><a href="https://www.binance.com/?ref=15877190" >Binance</a></h4>
+					<h4><a href="http://tradingview.go2cloud.org/aff_c?offer_id=2&aff_id=7610" >TradingView</a></h4>
+					<h3>Crypto</h3>
+					<h4>BTC : 18vCk2eAaBArQ58MjCajjr9feJ53WfPJPy</h4>
+					<h4>ETH : 0x8007df356E4bF48c38503217b1465E35a97697b5</h4>
+					<h4>LTC : LPYmGpF5GpzfsevmKSMiuLdm2s7xsxvNFx</h4>
+					<h4>GRC : SDvYGiKjZH7AFRwNre4WPL5T4WZ5yFoeJ9</h4>
+				</div>
+
+			</div>
+		</div>
+		<div class="actions">
+			<div class="ui black deny button">
+				Cancel
+			</div>
+			<div class="ui positive right labeled icon button">
+				Valid
+				<i class="checkmark icon"></i>
+			</div>
+		</div>
+	</div>
+
+	<div class="ui modal" id="newModuleModal">
+		<i class="close icon"></i>
+		<div class="header">
+			Pick a module
+		</div>
+		<div class="content">
+			<form class="ui form">
+				<div class="field">
+					<label>Type</label>
+					<select v-model="newModuleType" >
+						<option value="tradingview" >TradingView</option>
+						<option value="twitter" >Twitter Feed</option>
+						<option value="iframe" >Iframe</option>
+					</select>
+				</div>
+
+				<h4 class="ui dividing header">Module options</h4>
+				<div v-for="option of currentOptions" class="field" >
+					<template v-if="option.type=='text'" >
+						<label>{{option.label}}</label>
+						<input type="text" v-model="option.value" />
+					</template>
+					<template v-if="option.type=='select'" >
+						<label>{{option.label}}</label>
+						<select v-model="option.value" >
+							<option v-for="value of option.values" :value="value.value" :key="value.value">{{value.label}}</option>
+						</select>
+					</template>
+					<template v-if="option.type=='check'" >
+						<div class="ui toggle checkbox">
+							<input type="checkbox" class="hidden" v-model="option.value">
+							<label>{{option.label}}</label>
+						</div>
+					</template>
+				</div>
+			</form>
+		</div>
+		<div class="actions">
+			<div class="ui black deny button">
+				Cancel
+			</div>
+			<div class="ui positive right labeled icon button">
+				Add
+				<i class="checkmark icon"></i>
+			</div>
+		</div>
+	</div>
+
+	<div class="ui left demo vertical inverted sidebar labeled icon menu">
+		<a class="item" @click="showSettings()">
+			<i class="setting-icon fa fa-cog"></i>
+			Settings
+		</a>
+		<a class="item" @click="addToBookmark()">
+			<i class="setting-icon fa fa-book"></i>
+			Bookmark
+		</a>
+		<a class="item" @click="toggleEdit()">
+			<i class="setting-icon fa fa-edit"></i>
+			Edit
+		</a>
+		<a class="item" @click="toggleEdit()">
+			<i class="setting-icon fa fa-handshake-o"></i>
+			Donate
+		</a>
+	</div>
+
+	<div @click="openSidebar()" class="openSidebar"><i class="fa fa-arrow-right"></i></div>
+
+	<div class="pusher">
+
+	<div v-for="(row,iRow) of grid" class="row" >
+		<template v-for="(cell, iColumn) of row" >
+			<div
+					v-if="cell.moduleUid !== null"
+					:class="(cell.full ? 'full ' : '')+'cell'"
+					:style="'left:'+(iColumn*100/row.length)+'%;width:'+(100/row.length*cell.size.x)+'%;top:'+(iRow*100/grid.length)+'%;height:'+(100/grid.length*cell.size.y)+'%'"
+					:id="cell.moduleUid"
+			>
+				<div :id="cell.moduleUid+'-content'" style="width:100%;height:100%"></div>
+				<div :id="cell.moduleUid+'-actions'" class="actions" >
+					<span class="remove ui button" @click="removeModule(cell)" v-if="editable" ><i class="fa fa-remove"></i></span>
+					<span class="expand ui button" @click="expandCell(cell)" v-if="!cell.full"><i class="fa fa-expand "></i></span>
+					<span class="expand ui button" @click="shortCell(cell)" v-else=""><i class="fa fa-compress "></i></span>
+					<span class="expand ui button" @click="openExternal(cell)" ><i class="fa fa-external-link "></i></span>
+
+					<span class="expand ui button" @click="changeCellSize(cell, 'down')" v-if="editable"><i class="fa fa-arrow-down"></i></span>
+					<span class="expand ui button" @click="changeCellSize(cell, 'up')" v-if="editable"><i class="fa fa-arrow-up"></i></span>
+					<span class="expand ui button" @click="changeCellSize(cell, 'left')" v-if="editable"><i class="fa fa-arrow-left"></i></span>
+					<span class="expand ui button" @click="changeCellSize(cell, 'right')" v-if="editable"><i class="fa fa-arrow-right"></i></span>
+				</div>
+			</div>
+			<div
+					v-else-if="cell.moduleUid === null && !cell.used && editable"
+					class="cell clickToAdd ui button"
+					:style="'left:'+(iColumn*100/row.length)+'%;width:'+(100/row.length)+'%;top:'+(iRow*100/grid.length)+'%;height:'+(100/grid.length*cell.size.y)+'%'"
+					@click="cellClick(cell)"
+
+			>
+				<span>Click to add</span>
+			</div>
+		</template>
+	</div>
+
+	</div>
+</div>
+<script data-main="assets/js/editor.js" src="assets/js/require.js"></script>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-111960989-1"></script>
+<script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+
+	gtag('config', 'UA-111960989-1');
+</script>
+
 </body>
 </html>
