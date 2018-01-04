@@ -86,7 +86,7 @@
 	<div class="ui modal" id="newModuleModal">
 		<i class="close icon"></i>
 		<div class="header">
-			Pick a module
+			Pick a widget
 		</div>
 		<div class="content">
 			<form class="ui form">
@@ -99,7 +99,7 @@
 					</select>
 				</div>
 
-				<h4 class="ui dividing header">Module options</h4>
+				<h4 class="ui dividing header">Widget options</h4>
 				<div v-for="option of currentOptions" class="field" >
 					<template v-if="option.type=='text'" >
 						<label>{{option.label}}</label>
@@ -131,6 +131,26 @@
 		</div>
 	</div>
 
+	<div class="ui modal" id="roadmapModal">
+		<i class="close icon"></i>
+		<div class="header">
+			Roadmap
+		</div>
+		<div class="content">
+			<h3>In progress</h3>
+
+			<h3>Ideas (ordered)</h3>
+			<h5>Profit/Exit calculator widget</h5>
+			<h5>Saving/Edit widget default values</h5>
+			<h5>Edit widget (nicer than delete/add)</h5>
+			<h5>Slack widget</h5>
+			<h5>Buy/Sell widget</h5>
+			<h5>Tradingview alerts</h5>
+
+			<h3>Known bugs</h3>
+		</div>
+	</div>
+
 	<div class="ui left demo vertical inverted sidebar labeled icon menu">
 		<a class="item" @click="showSettings()">
 			<i class="setting-icon fa fa-cog"></i>
@@ -147,6 +167,10 @@
 		<a class="item" @click="showSettings()">
 			<i class="setting-icon fa fa-handshake-o"></i>
 			Donate
+		</a>
+		<a class="item" @click="showRoadmap()">
+			<i class="setting-icon fa fa-lightbulb-o "></i>
+			Roadmap
 		</a>
 	</div>
 

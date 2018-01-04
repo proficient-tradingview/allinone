@@ -145,6 +145,12 @@ class App extends Vue{
 		;
 	}
 
+	showRoadmap(){
+		$('#roadmapModal')
+			.modal('show')
+		;
+	}
+
 	recalculateGrid(clearGrid=false,clearModules=false){
 		if(clearModules) {
 			this.modules = [];

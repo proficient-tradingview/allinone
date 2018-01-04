@@ -132,6 +132,10 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
             })
                 .modal('show');
         };
+        App.prototype.showRoadmap = function () {
+            $('#roadmapModal')
+                .modal('show');
+        };
         App.prototype.recalculateGrid = function (clearGrid, clearModules) {
             if (clearGrid === void 0) { clearGrid = false; }
             if (clearModules === void 0) { clearModules = false; }
