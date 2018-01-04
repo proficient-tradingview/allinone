@@ -434,6 +434,34 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
             var json = this.export();
             window.history.pushState(null, '', '?data=' + btoa(json));
         };
+        App.prototype.saveConfig = function () {
+            var blob = new Blob([this.export()], { type: "application/json;charset=utf-8" });
+            saveAs(blob, 'state.json');
+        };
+        App.prototype.loadConfig = function () {
+            var self = this;
+            var inputs = $('<input type="file" />');
+            inputs.click();
+            var input = inputs[0];
+            input.addEventListener('change', function (event) {
+                var files = input.files; // FileList object
+                if (files === null)
+                    return;
+                console.log(files);
+                var _loop_1 = function (i, f) {
+                    var reader = new FileReader();
+                    reader.onload = (function (theFile) {
+                        return function () {
+                            self.buildFromData(reader.result);
+                        };
+                    })(f);
+                    reader.readAsText(f);
+                };
+                for (var i = 0, f = void 0; f = files[i]; i++) {
+                    _loop_1(i, f);
+                }
+            }, false);
+        };
         __decorate([
             VueAnnotate_1.VueVar()
         ], App.prototype, "grid", void 0);

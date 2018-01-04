@@ -461,6 +461,35 @@ class App extends Vue{
 		window.history.pushState(null,'','?data='+btoa(json));
 	}
 
+	saveConfig(){
+		let blob = new Blob([this.export()], {type: "application/json;charset=utf-8"});
+		saveAs(blob, 'state.json');
+	}
+	loadConfig(){
+		let self = this;
+		let inputs = $('<input type="file" />');
+		inputs.click();
+
+		let input = <HTMLInputElement>inputs[0];
+		input.addEventListener('change', function(event : Event){
+			let files = input.files; // FileList object
+			if(files === null)return;
+			console.log(files);
+
+			for (let i = 0, f; f = files[i]; i++) {
+				let reader = new FileReader();
+
+				reader.onload = (function(theFile) {
+					return function() {
+						self.buildFromData(reader.result);
+					};
+				})(f);
+				reader.readAsText(f);
+			}
+		}, false);
+
+	}
+
 }
 
 let app = new App('#app');
