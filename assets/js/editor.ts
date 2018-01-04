@@ -7,6 +7,7 @@ import {TwitterModule} from "./modules/TwitterModule";
 import {IframeModule} from "./modules/IframeModule";
 import Utils from "./Utils";
 import {ModuleFactory} from "./modules/ModuleFactory";
+import {Configuration} from "./Configuration";
 
 
 
@@ -44,8 +45,12 @@ class App extends Vue{
 	@VueVar()
 	editable : boolean = false;
 
+	@VueVar()
+	configuration : Configuration;
+
 	constructor(containerName : string, vuejsDataConstructor:VueConstructObject|string=''){
 		super(vuejsDataConstructor);
+		this.configuration = new Configuration();
 
 		let params = Utils.getSearchParameters();
 		console.log(params);
@@ -59,18 +64,6 @@ class App extends Vue{
 			this.editable = true;
 			this.recalculateGrid();
 		}
-
-		/*$.ajax({
-			url:'https://alerts.tradingview.com/alerts/',
-			method:'POST',
-			// data:'{"m":"list_alerts","p":{"limit":30,"inc_cross_int":true}}',
-			data:'{"m":"list_events","p":{"limit":50,"inc_del":true,"inc_cross_int":true}}',
-			xhrFields: {
-				withCredentials: true
-			}
-		}).done(function(data : any){
-			console.log(data);
-		});*/
 	}
 
 	openSidebar(){
@@ -110,7 +103,7 @@ class App extends Vue{
 							self.modules.push(newModule);
 							self.$nextTick(function () {
 								if(newModule !== null)
-									newModule.update();
+									newModule.update(self.configuration);
 								// self.updateAll();
 							});
 							self.exportToUrl();
@@ -126,19 +119,30 @@ class App extends Vue{
 		console.log(this.modules);
 		for(let module of this.modules){
 			console.log(module);
-			module.update();
+			module.update(this.configuration);
 		}
 	}
 
 	showSettings(){
 		let self = this;
+		let oldGridSize = {
+			width:this.gridWidth,
+			height:this.gridHeight
+		};
+
 		$('#settingsModal')
 			.modal({
 				onDeny    : function(){
 				},
 				onApprove : function() {
-					self.recalculateGrid(true);
-					self.editable = true;
+					if(
+						self.gridWidth !== oldGridSize.width ||
+						self.gridHeight !== oldGridSize.height
+					) {
+						self.recalculateGrid(true);
+						self.editable = true;
+					}
+					self.exportToUrl();
 				}
 			})
 			.modal('show')
@@ -273,6 +277,12 @@ class App extends Vue{
 					(<any>module)[i] = moduleContent[i];
 				}
 				this.modules.push(module);
+			}
+		}
+
+		if("configuration" in data){
+			for(let i in data.configuration){
+				(<any>this.configuration)[i] = data.configuration[i];
 			}
 		}
 
@@ -448,7 +458,8 @@ class App extends Vue{
 		let ojson = {
 			version:1,
 			grid:this.grid,
-			modules:this.modules
+			modules:this.modules,
+			configuration:this.configuration
 		};
 
 		let json = JSON.stringify(ojson);

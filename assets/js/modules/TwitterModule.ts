@@ -1,5 +1,6 @@
 import {Module} from "./Module";
 import {Option, OptionValueLabel} from "../Option";
+import {Configuration} from "../Configuration";
 
 export class TwitterModule extends Module{
 
@@ -20,18 +21,12 @@ export class TwitterModule extends Module{
 		]
 	}
 
-	setOption(option: Option, refresh=true) {
+	setOption(option: Option) {
 		if(option.id == 'ref')	this.ref = option.value;
 		if(option.id == 'theme')	this.theme = option.value;
-		console.log(option.value);
-
-		if(refresh)this.update();
 	}
 
-	update(){
-		console.log('refresh');
-		console.log(this.ref);
-
+	update(config : Configuration){
 		let options = '';
 		if(this.theme == 'Dark') options += ' data-theme="dark"';
 

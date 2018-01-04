@@ -93,15 +93,11 @@ define(["require", "exports", "./Module", "../Option"], function (require, expor
                 new Option_1.Option('allowSymbolChange', 'check', 'Allow symbol change (not saved when modifying after inserting)', TradingModule.defaultAllowSymbolChange),
             ];
         };
-        TradingModule.prototype.setOption = function (option, refresh) {
-            if (refresh === void 0) { refresh = true; }
+        TradingModule.prototype.setOption = function (option) {
             if (option.id in this)
                 this[option.id] = option.value;
-            if (refresh)
-                this.update();
         };
-        TradingModule.prototype.update = function () {
-            console.log('symbol change:' + this.allowSymbolChange);
+        TradingModule.prototype.update = function (config) {
             $('#' + this.uid + '-content').attr('style', function (i, s) { return s + 'overflow: hidden !important;'; });
             var options = {
                 "container_id": this.uid + '-content',
@@ -112,20 +108,33 @@ define(["require", "exports", "./Module", "../Option"], function (require, expor
                 "theme": this.theme,
                 "style": this.style,
                 "locale": navigator.language || 'en',
-                "toolbar_bg": "#f1f3f6",
+                // "toolbar_bg": config.backgroundColor,
+                // "toolbar_bg": this.hexToRgbA(config.backgroundColor),
                 "enable_publishing": false,
                 "allow_symbol_change": this.allowSymbolChange,
                 "show_popup_button": false,
                 "hideideas": true,
             };
+            console.log(config.backgroundColor);
             if (this.hideTopbar)
                 options['hide_top_toolbar'] = true;
             else
                 options['hide_top_toolbar'] = false;
-            console.log(this.hideSidebar);
             if (!this.hideSidebar)
                 options['hide_side_toolbar'] = false;
             new TradingView.widget(options);
+        };
+        TradingModule.prototype.hexToRgbA = function (hex) {
+            var c;
+            if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
+                var c2 = hex.substring(1).split('');
+                if (c2.length == 3) {
+                    c2 = [c2[0], c2[0], c2[1], c2[1], c2[2], c2[2]];
+                }
+                c = ('0x' + c2.join(''));
+                return 'rgba(' + [(c >> 16) & 255, (c >> 8) & 255, c & 255].join(',') + ',1)';
+            }
+            throw new Error('Bad Hex');
         };
         TradingModule.defaultSymbol = 'BINANCE:BTCUSDT';
         TradingModule.defaultTheme = 'Dark';

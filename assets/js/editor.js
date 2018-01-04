@@ -14,7 +14,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", "./modules/TwitterModule", "./modules/IframeModule", "./Utils", "./modules/ModuleFactory"], function (require, exports, VueAnnotate_1, TradingViewModule_1, TwitterModule_1, IframeModule_1, Utils_1, ModuleFactory_1) {
+define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", "./modules/TwitterModule", "./modules/IframeModule", "./Utils", "./modules/ModuleFactory", "./Configuration"], function (require, exports, VueAnnotate_1, TradingViewModule_1, TwitterModule_1, IframeModule_1, Utils_1, ModuleFactory_1, Configuration_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Cell = (function () {
@@ -40,6 +40,7 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
             _this.currentOptions = [];
             _this.newModuleType = 'tradingview';
             _this.editable = false;
+            _this.configuration = new Configuration_1.Configuration();
             var params = Utils_1.default.getSearchParameters();
             console.log(params);
             if (typeof params.chart !== 'undefined') {
@@ -56,17 +57,6 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
                 _this.recalculateGrid();
             }
             return _this;
-            /*$.ajax({
-                url:'https://alerts.tradingview.com/alerts/',
-                method:'POST',
-                // data:'{"m":"list_alerts","p":{"limit":30,"inc_cross_int":true}}',
-                data:'{"m":"list_events","p":{"limit":50,"inc_del":true,"inc_cross_int":true}}',
-                xhrFields: {
-                    withCredentials: true
-                }
-            }).done(function(data : any){
-                console.log(data);
-            });*/
         }
         App.prototype.openSidebar = function () {
             $('#app .ui.labeled.icon.sidebar')
@@ -101,7 +91,7 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
                             self_1.modules.push(newModule);
                             self_1.$nextTick(function () {
                                 if (newModule !== null)
-                                    newModule.update();
+                                    newModule.update(self_1.configuration);
                                 // self.updateAll();
                             });
                             self_1.exportToUrl();
@@ -116,18 +106,26 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
             for (var _i = 0, _a = this.modules; _i < _a.length; _i++) {
                 var module = _a[_i];
                 console.log(module);
-                module.update();
+                module.update(this.configuration);
             }
         };
         App.prototype.showSettings = function () {
             var self = this;
+            var oldGridSize = {
+                width: this.gridWidth,
+                height: this.gridHeight
+            };
             $('#settingsModal')
                 .modal({
                 onDeny: function () {
                 },
                 onApprove: function () {
-                    self.recalculateGrid(true);
-                    self.editable = true;
+                    if (self.gridWidth !== oldGridSize.width ||
+                        self.gridHeight !== oldGridSize.height) {
+                        self.recalculateGrid(true);
+                        self.editable = true;
+                    }
+                    self.exportToUrl();
                 }
             })
                 .modal('show');
@@ -243,6 +241,11 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
                         module[i] = moduleContent[i];
                     }
                     this.modules.push(module);
+                }
+            }
+            if ("configuration" in data) {
+                for (var i in data.configuration) {
+                    this.configuration[i] = data.configuration[i];
                 }
             }
             this.$nextTick(function () {
@@ -424,7 +427,8 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
             var ojson = {
                 version: 1,
                 grid: this.grid,
-                modules: this.modules
+                modules: this.modules,
+                configuration: this.configuration
             };
             var json = JSON.stringify(ojson);
             console.log(json);
@@ -489,6 +493,9 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
         __decorate([
             VueAnnotate_1.VueVar()
         ], App.prototype, "editable", void 0);
+        __decorate([
+            VueAnnotate_1.VueVar()
+        ], App.prototype, "configuration", void 0);
         __decorate([
             VueAnnotate_1.VueWatched()
         ], App.prototype, "newModuleTypeWatch", null);

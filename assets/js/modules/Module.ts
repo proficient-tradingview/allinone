@@ -1,6 +1,7 @@
 
 import {Uuid} from "../uuid";
 import {Option} from "../Option";
+import {Configuration} from "../Configuration";
 
 export type ModuleType = 'twitter'|'tradingview'|'iframe';
 
@@ -16,15 +17,15 @@ export abstract class Module{
 
 	getLink() : string|null{return null;}
 
-	update(){}
+	update(config : Configuration){}
 
 	static getOptions() : Option[]{
 		return [];
 	}
 
-	setOption(option : Option, refresh:boolean=true){}
+	setOption(option : Option){}
 	setOptions(options : Array<Option>, refresh:boolean=true){
 		for(let option of options)
-			this.setOption(option, refresh);
+			this.setOption(option);
 	}
 }

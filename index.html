@@ -23,7 +23,7 @@
 </head>
 <body>
 
-<div id="app" class="ui bottom attached segment pushable">
+<div id="app" class="ui bottom attached segment pushable" :style="'background:'+(configuration.backgroundColor)+';'" v-if="typeof configuration !== 'undefined'">
 
 	<div class="ui modal" id="settingsModal">
 		<i class="close icon"></i>
@@ -51,6 +51,19 @@
 									</select>
 								</div>
 							</div>
+						</div>
+						<div class="field">
+							<label>Background color</label>
+							<select v-model="configuration.backgroundColor" :style="'background-color:'+configuration.backgroundColor" class="selectBackgroundColor" >
+								<option value="#1b1c1d" style="background:#1b1c1d" >Text</option>
+								<option value="#082648" style="background:#082648" >Text</option>
+								<option value="#2b768d" style="background:#2b768d" >Text</option>
+								<option value="#1b5a8f" style="background:#1b5a8f" >Text</option>
+								<option value="#4e7ca0" style="background:#4e7ca0" >Text</option>
+								<option value="#82abc7" style="background:#82abc7" >Text</option>
+								<option value="#a2a9b2" style="background:#a2a9b2" >Text</option>
+								<option value="#6f828d" style="background:#6f828d" >Text</option>
+							</select>
 						</div>
 					</form>
 				</div>
@@ -95,7 +108,7 @@
 		<div class="content">
 			<form class="ui form">
 				<div class="field">
-					<label>Type</label>
+					<label>Select widget type</label>
 					<select v-model="newModuleType" >
 						<option value="tradingview" >TradingView</option>
 						<option value="twitter" >Twitter Feed</option>
@@ -142,21 +155,30 @@
 		</div>
 		<div class="content">
 			<h3>Done</h3>
-			<h5>Export as file & reload - 2018-01-04</h5>
+			<ul>
+				<li>Adding configuration base - 2018-01-04</li>
+				<li>Export as file & reload - 2018-01-04</li>
+				<li>Initial version - 2018-01-03</li>
+			</ul>
 
 			<h3>Ideas</h3>
-			<h5>Profit/Exit calculator widget</h5>
-			<h5>Intercepting event from TradingView to change options when user change it</h5>
-			<h5>Multiple profiles (switch between them in the left side menu)</h5>
-			<h5>Saving/Edit widget default values</h5>
-			<h5>Edit widget (nicer than delete/add)</h5>
-			<h5>Slack widget</h5>
-			<h5>Buy/Sell widget</h5>
-			<h5>Tradingview alerts</h5>
-			<h5>Look into https://github.com/niwacode/quickfingersscanner</h5>
+			<ul>
+				<li>Profit/Exit calculator widget</li>
+				<li>Intercepting event from TradingView to change options when user change it</li>
+				<li>Multiple profiles (switch between them in the left side menu)</li>
+				<li>Saving/Edit widget default values</li>
+				<li>Edit widget (nicer than delete/add)</li>
+				<li>Slack widget</li>
+				<li>Buy/Sell widget</li>
+				<li>Tradingview alerts</li>
+				<li>Totorial/Explanations</li>
+				<li>Look into https://github.com/niwacode/quickfingersscanner</li>
+			</ul>
 
 			<h3>Known bugs</h3>
-			<h5>Some browsers : url too long causing lost of the configuration</h5>
+			<ul>
+				<li>Some browsers : url too long causing lost of the configuration</li>
+			</ul>
 		</div>
 	</div>
 
@@ -191,7 +213,7 @@
 		</a>
 	</div>
 
-	<div @click="openSidebar()" class="openSidebar"><i class="fa fa-arrow-right"></i></div>
+	<div @click="openSidebar()" class="openSidebar"><i class="fa fa-cog"></i></div>
 
 	<div class="pusher">
 
