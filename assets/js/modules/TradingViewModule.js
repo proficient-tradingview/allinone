@@ -117,12 +117,6 @@ define(["require", "exports", "./Module", "../Option"], function (require, expor
                 "allow_symbol_change": this.allowSymbolChange,
                 "show_popup_button": false,
                 "hideideas": true,
-                "referral_id": "7610"
-                /*"details": true,
-                "hidevolume":0,
-                /*"hotlist": true,
-                "calendar": true,*/
-                // "logo":"https://www.seoclerk.com/pics/558390-11FO8A1505384509.png"
             };
             if (this.hideTopbar)
                 options['hide_top_toolbar'] = true;

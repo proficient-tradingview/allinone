@@ -117,7 +117,7 @@ export class TradingModule extends Module{
 			"allow_symbol_change": this.allowSymbolChange,
 			"show_popup_button": false,
 			"hideideas": true,
-			"referral_id": "7610"
+			// "referral_id": "7610"
 			/*"details": true,
 			"hidevolume":0,
 			/*"hotlist": true,
