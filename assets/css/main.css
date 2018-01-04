@@ -42,8 +42,7 @@ body{
 	color:white !important;
 }
 .clickToAdd:hover{
-	background: #4a4a4a;
-	background: rgba(0,0,0,0.1)
+	background: rgba(0,0,0,0.1) !important;
 }
 
 .setting-icon{
