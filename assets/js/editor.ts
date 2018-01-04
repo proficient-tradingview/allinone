@@ -7,6 +7,7 @@ import {TwitterModule} from "./modules/TwitterModule";
 import {IframeModule} from "./modules/IframeModule";
 import Utils from "./Utils";
 import {ModuleFactory} from "./modules/ModuleFactory";
+import {Configuration} from "./Configuration";
 
 
 
@@ -44,6 +45,8 @@ class App extends Vue{
 	@VueVar()
 	editable : boolean = false;
 
+	configuration : Configuration;
+
 	constructor(containerName : string, vuejsDataConstructor:VueConstructObject|string=''){
 		super(vuejsDataConstructor);
 
@@ -60,17 +63,21 @@ class App extends Vue{
 			this.recalculateGrid();
 		}
 
-		/*$.ajax({
-			url:'https://alerts.tradingview.com/alerts/',
-			method:'POST',
+		this.configuration = new Configuration();
+
+		$.ajax({
+			url:'https://api.binance.com/api/v1/time',
+			// url:'https://alerts.tradingview.com/alerts/',
+			method:'GET',
+			// method:'POST',
 			// data:'{"m":"list_alerts","p":{"limit":30,"inc_cross_int":true}}',
-			data:'{"m":"list_events","p":{"limit":50,"inc_del":true,"inc_cross_int":true}}',
+			// data:'{"m":"list_events","p":{"limit":50,"inc_del":true,"inc_cross_int":true}}',
 			xhrFields: {
 				withCredentials: true
 			}
 		}).done(function(data : any){
 			console.log(data);
-		});*/
+		});
 	}
 
 	openSidebar(){

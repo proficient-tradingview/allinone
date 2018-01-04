@@ -14,7 +14,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", "./modules/TwitterModule", "./modules/IframeModule", "./Utils", "./modules/ModuleFactory"], function (require, exports, VueAnnotate_1, TradingViewModule_1, TwitterModule_1, IframeModule_1, Utils_1, ModuleFactory_1) {
+define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", "./modules/TwitterModule", "./modules/IframeModule", "./Utils", "./modules/ModuleFactory", "./Configuration"], function (require, exports, VueAnnotate_1, TradingViewModule_1, TwitterModule_1, IframeModule_1, Utils_1, ModuleFactory_1, Configuration_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var Cell = (function () {
@@ -55,18 +55,21 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
                 _this.editable = true;
                 _this.recalculateGrid();
             }
-            return _this;
-            /*$.ajax({
-                url:'https://alerts.tradingview.com/alerts/',
-                method:'POST',
+            _this.configuration = new Configuration_1.Configuration();
+            $.ajax({
+                url: 'https://api.binance.com/api/v1/time',
+                // url:'https://alerts.tradingview.com/alerts/',
+                method: 'GET',
+                // method:'POST',
                 // data:'{"m":"list_alerts","p":{"limit":30,"inc_cross_int":true}}',
-                data:'{"m":"list_events","p":{"limit":50,"inc_del":true,"inc_cross_int":true}}',
+                // data:'{"m":"list_events","p":{"limit":50,"inc_del":true,"inc_cross_int":true}}',
                 xhrFields: {
                     withCredentials: true
                 }
-            }).done(function(data : any){
+            }).done(function (data) {
                 console.log(data);
-            });*/
+            });
+            return _this;
         }
         App.prototype.openSidebar = function () {
             $('#app .ui.labeled.icon.sidebar')
