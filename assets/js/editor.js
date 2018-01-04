@@ -56,19 +56,6 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
                 _this.editable = true;
                 _this.recalculateGrid();
             }
-            $.ajax({
-                url: 'https://api.binance.com/api/v1/time',
-                // url:'https://alerts.tradingview.com/alerts/',
-                method: 'GET',
-                // method:'POST',
-                // data:'{"m":"list_alerts","p":{"limit":30,"inc_cross_int":true}}',
-                // data:'{"m":"list_events","p":{"limit":50,"inc_del":true,"inc_cross_int":true}}',
-                xhrFields: {
-                    withCredentials: true
-                }
-            }).done(function (data) {
-                console.log(data);
-            });
             return _this;
         }
         App.prototype.openSidebar = function () {
