@@ -1,3 +1,7 @@
+body{
+	background: #1b1c1d;
+}
+
 .row{
 }
 .cell{
@@ -48,6 +52,7 @@
 	height:100%;
 	position: relative;
 	margin-bottom:0;
+	background: #1b1c1d;
 }
 
 #app .openSidebar{
