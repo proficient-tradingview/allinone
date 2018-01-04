@@ -1,5 +1,6 @@
 import {Module} from "./Module";
 import {Option, OptionValueLabel} from "../Option";
+import {Configuration} from "../Configuration";
 
 export class IframeModule extends Module{
 
@@ -18,12 +19,11 @@ export class IframeModule extends Module{
 		]
 	}
 
-	setOption(option: Option, refresh=true) {
+	setOption(option: Option) {
 		if(option.id == 'href')	this.href = option.value;
-		if(refresh)this.update();
 	}
 
-	update(){
+	update(config : Configuration){
 		let options = 'options';
 		$('#'+this.uid+'-content').html('<iframe src="'+this.href+'" '+options+' style="width:100%;height:100%">Tweets</iframe>');
 	}

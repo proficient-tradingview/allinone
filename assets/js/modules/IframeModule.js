@@ -25,14 +25,11 @@ define(["require", "exports", "./Module", "../Option"], function (require, expor
                 new Option_1.Option('href', 'text', 'URL', 'https://quickfingerstraders.slack.com'),
             ];
         };
-        IframeModule.prototype.setOption = function (option, refresh) {
-            if (refresh === void 0) { refresh = true; }
+        IframeModule.prototype.setOption = function (option) {
             if (option.id == 'href')
                 this.href = option.value;
-            if (refresh)
-                this.update();
         };
-        IframeModule.prototype.update = function () {
+        IframeModule.prototype.update = function (config) {
             var options = 'options';
             $('#' + this.uid + '-content').html('<iframe src="' + this.href + '" ' + options + ' style="width:100%;height:100%">Tweets</iframe>');
         };

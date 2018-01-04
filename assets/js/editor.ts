@@ -45,10 +45,12 @@ class App extends Vue{
 	@VueVar()
 	editable : boolean = false;
 
+	@VueVar()
 	configuration : Configuration;
 
 	constructor(containerName : string, vuejsDataConstructor:VueConstructObject|string=''){
 		super(vuejsDataConstructor);
+		this.configuration = new Configuration();
 
 		let params = Utils.getSearchParameters();
 		console.log(params);
@@ -62,8 +64,6 @@ class App extends Vue{
 			this.editable = true;
 			this.recalculateGrid();
 		}
-
-		this.configuration = new Configuration();
 
 		$.ajax({
 			url:'https://api.binance.com/api/v1/time',
@@ -117,7 +117,7 @@ class App extends Vue{
 							self.modules.push(newModule);
 							self.$nextTick(function () {
 								if(newModule !== null)
-									newModule.update();
+									newModule.update(self.configuration);
 								// self.updateAll();
 							});
 							self.exportToUrl();
@@ -133,19 +133,30 @@ class App extends Vue{
 		console.log(this.modules);
 		for(let module of this.modules){
 			console.log(module);
-			module.update();
+			module.update(this.configuration);
 		}
 	}
 
 	showSettings(){
 		let self = this;
+		let oldGridSize = {
+			width:this.gridWidth,
+			height:this.gridHeight
+		};
+
 		$('#settingsModal')
 			.modal({
 				onDeny    : function(){
 				},
 				onApprove : function() {
-					self.recalculateGrid(true);
-					self.editable = true;
+					if(
+						self.gridWidth !== oldGridSize.width ||
+						self.gridHeight !== oldGridSize.height
+					) {
+						self.recalculateGrid(true);
+						self.editable = true;
+					}
+					self.exportToUrl();
 				}
 			})
 			.modal('show')
@@ -280,6 +291,12 @@ class App extends Vue{
 					(<any>module)[i] = moduleContent[i];
 				}
 				this.modules.push(module);
+			}
+		}
+
+		if("configuration" in data){
+			for(let i in data.configuration){
+				(<any>this.configuration)[i] = data.configuration[i];
 			}
 		}
 
@@ -455,7 +472,8 @@ class App extends Vue{
 		let ojson = {
 			version:1,
 			grid:this.grid,
-			modules:this.modules
+			modules:this.modules,
+			configuration:this.configuration
 		};
 
 		let json = JSON.stringify(ojson);

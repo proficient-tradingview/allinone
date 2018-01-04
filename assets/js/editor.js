@@ -40,6 +40,7 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
             _this.currentOptions = [];
             _this.newModuleType = 'tradingview';
             _this.editable = false;
+            _this.configuration = new Configuration_1.Configuration();
             var params = Utils_1.default.getSearchParameters();
             console.log(params);
             if (typeof params.chart !== 'undefined') {
@@ -55,7 +56,6 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
                 _this.editable = true;
                 _this.recalculateGrid();
             }
-            _this.configuration = new Configuration_1.Configuration();
             $.ajax({
                 url: 'https://api.binance.com/api/v1/time',
                 // url:'https://alerts.tradingview.com/alerts/',
@@ -104,7 +104,7 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
                             self_1.modules.push(newModule);
                             self_1.$nextTick(function () {
                                 if (newModule !== null)
-                                    newModule.update();
+                                    newModule.update(self_1.configuration);
                                 // self.updateAll();
                             });
                             self_1.exportToUrl();
@@ -119,18 +119,26 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
             for (var _i = 0, _a = this.modules; _i < _a.length; _i++) {
                 var module = _a[_i];
                 console.log(module);
-                module.update();
+                module.update(this.configuration);
             }
         };
         App.prototype.showSettings = function () {
             var self = this;
+            var oldGridSize = {
+                width: this.gridWidth,
+                height: this.gridHeight
+            };
             $('#settingsModal')
                 .modal({
                 onDeny: function () {
                 },
                 onApprove: function () {
-                    self.recalculateGrid(true);
-                    self.editable = true;
+                    if (self.gridWidth !== oldGridSize.width ||
+                        self.gridHeight !== oldGridSize.height) {
+                        self.recalculateGrid(true);
+                        self.editable = true;
+                    }
+                    self.exportToUrl();
                 }
             })
                 .modal('show');
@@ -246,6 +254,11 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
                         module[i] = moduleContent[i];
                     }
                     this.modules.push(module);
+                }
+            }
+            if ("configuration" in data) {
+                for (var i in data.configuration) {
+                    this.configuration[i] = data.configuration[i];
                 }
             }
             this.$nextTick(function () {
@@ -427,7 +440,8 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
             var ojson = {
                 version: 1,
                 grid: this.grid,
-                modules: this.modules
+                modules: this.modules,
+                configuration: this.configuration
             };
             var json = JSON.stringify(ojson);
             console.log(json);
@@ -492,6 +506,9 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
         __decorate([
             VueAnnotate_1.VueVar()
         ], App.prototype, "editable", void 0);
+        __decorate([
+            VueAnnotate_1.VueVar()
+        ], App.prototype, "configuration", void 0);
         __decorate([
             VueAnnotate_1.VueWatched()
         ], App.prototype, "newModuleTypeWatch", null);

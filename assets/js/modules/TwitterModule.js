@@ -26,19 +26,13 @@ define(["require", "exports", "./Module", "../Option"], function (require, expor
                 new Option_1.Option('theme', 'select', 'Theme', 'Dark', [new Option_1.OptionValueLabel('Dark', 'Dark'), new Option_1.OptionValueLabel('Light', 'Light')])
             ];
         };
-        TwitterModule.prototype.setOption = function (option, refresh) {
-            if (refresh === void 0) { refresh = true; }
+        TwitterModule.prototype.setOption = function (option) {
             if (option.id == 'ref')
                 this.ref = option.value;
             if (option.id == 'theme')
                 this.theme = option.value;
-            console.log(option.value);
-            if (refresh)
-                this.update();
         };
-        TwitterModule.prototype.update = function () {
-            console.log('refresh');
-            console.log(this.ref);
+        TwitterModule.prototype.update = function (config) {
             var options = '';
             if (this.theme == 'Dark')
                 options += ' data-theme="dark"';

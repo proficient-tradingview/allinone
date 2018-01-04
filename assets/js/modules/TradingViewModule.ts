@@ -1,5 +1,6 @@
 import {Module} from "./Module";
 import {Option, OptionValueLabel} from "../Option";
+import {Configuration} from "../Configuration";
 
 export class TradingModule extends Module{
 
@@ -94,13 +95,11 @@ export class TradingModule extends Module{
 		]
 	}
 
-	setOption(option: Option, refresh=true) {
+	setOption(option: Option) {
 		if(option.id in this) (<any>this)[option.id] = option.value;
-		if(refresh)this.update();
 	}
 
-	update(){
-		console.log('symbol change:'+this.allowSymbolChange);
+	update(config : Configuration){
 		$('#'+this.uid+'-content').attr('style', function(i:any,s:any) { return s + 'overflow: hidden !important;' });
 
 		let options : any = {
@@ -112,7 +111,8 @@ export class TradingModule extends Module{
 			"theme": this.theme,
 			"style": this.style,
 			"locale": navigator.language || 'en',
-			"toolbar_bg": "#f1f3f6",
+			// "toolbar_bg": config.backgroundColor,
+			// "toolbar_bg": this.hexToRgbA(config.backgroundColor),
 			"enable_publishing": false,
 			"allow_symbol_change": this.allowSymbolChange,
 			"show_popup_button": false,
@@ -124,11 +124,24 @@ export class TradingModule extends Module{
 			"calendar": true,*/
 			// "logo":"https://www.seoclerk.com/pics/558390-11FO8A1505384509.png"
 		};
+		console.log(config.backgroundColor);
 
 		if(this.hideTopbar)			options['hide_top_toolbar'] = true;  else options['hide_top_toolbar'] = false;
-		console.log(this.hideSidebar);
 		if(!this.hideSidebar)		options['hide_side_toolbar'] = false;
 
 		new TradingView.widget(options);
+	}
+
+	hexToRgbA(hex : string){
+		let c : number;
+		if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+			let c2 = hex.substring(1).split('');
+			if(c2.length== 3){
+				c2= [c2[0], c2[0], c2[1], c2[1], c2[2], c2[2]];
+			}
+			c = <any>('0x'+c2.join(''));
+			return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+',1)';
+		}
+		throw new Error('Bad Hex');
 	}
 }
