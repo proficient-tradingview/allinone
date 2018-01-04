@@ -56,8 +56,68 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
                 _this.editable = true;
                 _this.recalculateGrid();
             }
+            _this.initDragAndDrop();
             return _this;
         }
+        App.prototype.initDragAndDrop = function () {
+            var counter = 0;
+            var appContainer = $('body');
+            appContainer.on('dragover', function (e) {
+                e.stopPropagation();
+                e.preventDefault();
+                if (typeof e.dataTransfer !== 'undefined' && "dropEffect" in e.dataTransfer)
+                    e.dataTransfer.dropEffect = 'copy';
+                $('.dropHereToLoad').show();
+            });
+            var self = this;
+            appContainer.on('drop', function (e) {
+                e.stopPropagation();
+                e.preventDefault();
+                var dt = e.originalEvent.dataTransfer;
+                if (dt.items) {
+                    var _loop_1 = function (i) {
+                        if (dt.items[i].kind == "file") {
+                            var f = dt.items[i].getAsFile();
+                            var reader_1 = new FileReader();
+                            reader_1.onload = (function (theFile) {
+                                return function (e) {
+                                    self.buildFromData(reader_1.result);
+                                };
+                            })(f);
+                            reader_1.readAsText(f);
+                        }
+                    };
+                    for (var i = 0; i < dt.items.length; i++) {
+                        _loop_1(i);
+                    }
+                }
+                else {
+                    var _loop_2 = function (i) {
+                        var reader = new FileReader();
+                        reader.onload = (function (theFile) {
+                            return function (e) {
+                                self.buildFromData(reader.result);
+                            };
+                        })(dt.files[i]);
+                        reader.readAsText(dt.files[i]);
+                    };
+                    for (var i = 0; i < dt.files.length; i++) {
+                        _loop_2(i);
+                    }
+                }
+                $('.dropHereToLoad').hide();
+                counter = 0;
+            });
+            appContainer.on('dragenter', function (e) {
+                ++counter;
+            });
+            appContainer.on('dragleave', function (e) {
+                --counter;
+                if (counter == 0) {
+                    $('.dropHereToLoad').hide();
+                }
+            });
+        };
         App.prototype.openSidebar = function () {
             $('#app .ui.labeled.icon.sidebar')
                 .sidebar({
@@ -454,7 +514,7 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
                 if (files === null)
                     return;
                 console.log(files);
-                var _loop_1 = function (i, f) {
+                var _loop_3 = function (i, f) {
                     var reader = new FileReader();
                     reader.onload = (function (theFile) {
                         return function () {
@@ -464,7 +524,7 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
                     reader.readAsText(f);
                 };
                 for (var i = 0, f = void 0; f = files[i]; i++) {
-                    _loop_1(i, f);
+                    _loop_3(i, f);
                 }
             }, false);
         };

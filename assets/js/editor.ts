@@ -64,6 +64,69 @@ class App extends Vue{
 			this.editable = true;
 			this.recalculateGrid();
 		}
+
+		this.initDragAndDrop();
+	}
+
+	initDragAndDrop(){
+		let counter = 0;
+
+		let appContainer = $('body');
+		appContainer.on('dragover', function(e:DragEvent) {
+			e.stopPropagation();
+			e.preventDefault();
+			if(typeof e.dataTransfer !== 'undefined' && "dropEffect" in e.dataTransfer)
+				e.dataTransfer.dropEffect = 'copy';
+
+			$('.dropHereToLoad').show();
+		});
+
+		let self = this;
+		appContainer.on('drop', function(e:any) {
+			e.stopPropagation();
+			e.preventDefault();
+			let dt = e.originalEvent.dataTransfer;
+			if (dt.items) {
+				for (let i=0; i < dt.items.length; i++) {
+					if (dt.items[i].kind == "file") {
+						let f = dt.items[i].getAsFile();
+						let reader = new FileReader();
+
+						reader.onload = (function(theFile:any) {
+							return function(e:any) {
+								self.buildFromData(reader.result);
+							};
+						})(f);
+						reader.readAsText(f);
+					}
+				}
+			} else {
+				for (let i=0; i < dt.files.length; i++) {
+					let reader = new FileReader();
+
+					reader.onload = (function(theFile:any) {
+						return function(e:any) {
+							self.buildFromData(reader.result);
+						};
+					})(dt.files[i]);
+					reader.readAsText(dt.files[i]);
+				}
+			}
+
+
+			$('.dropHereToLoad').hide();
+			counter=0;
+		});
+
+		appContainer.on('dragenter', function(e:DragEvent) {
+			++counter;
+		});
+		appContainer.on('dragleave', function(e:DragEvent) {
+			--counter;
+			if(counter==0){
+				$('.dropHereToLoad').hide();
+			}
+		});
 	}
 
 	openSidebar(){
@@ -437,8 +500,8 @@ class App extends Vue{
 	}
 
 	addToBookmark(){
-		var bookmarkURL = window.location.href;
-		var bookmarkTitle = document.title;
+		let bookmarkURL = window.location.href;
+		let bookmarkTitle = document.title;
 
 		if ('addToHomescreen' in window && (<any>window).addToHomescreen.isCompatible) {
 			// Mobile browsers
