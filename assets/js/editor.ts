@@ -135,6 +135,7 @@ class App extends Vue{
 				},
 				onApprove : function() {
 					self.recalculateGrid(true);
+					self.editable = true;
 				}
 			})
 			.modal('show')

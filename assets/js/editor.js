@@ -123,6 +123,7 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
                 },
                 onApprove: function () {
                     self.recalculateGrid(true);
+                    self.editable = true;
                 }
             })
                 .modal('show');
