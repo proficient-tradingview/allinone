@@ -280,6 +280,8 @@ class App extends Vue{
 			console.log('update all');
 			self.updateAll();
 		});
+
+		this.exportToUrl();
 	}
 
 	buildDefault(type = '$'){
@@ -308,6 +310,7 @@ class App extends Vue{
 			console.log('update all');
 			self.updateAll();
 		});
+		this.exportToUrl();
 	}
 
 	expandCell(cell : Cell){

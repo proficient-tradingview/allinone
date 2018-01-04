@@ -249,6 +249,7 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
                 console.log('update all');
                 self.updateAll();
             });
+            this.exportToUrl();
         };
         App.prototype.buildDefault = function (type) {
             if (type === void 0) { type = '$'; }
@@ -293,6 +294,7 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
                 console.log('update all');
                 self.updateAll();
             });
+            this.exportToUrl();
         };
         App.prototype.expandCell = function (cell) {
             cell.full = true;

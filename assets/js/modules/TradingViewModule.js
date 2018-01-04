@@ -23,6 +23,7 @@ define(["require", "exports", "./Module", "../Option"], function (require, expor
             _this.hideTopbar = TradingModule.defaultHideTopbar;
             _this.hideSidebar = TradingModule.defaultHideSidebar;
             _this.style = TradingModule.defaultHideSidebar;
+            _this.allowSymbolChange = TradingModule.defaultAllowSymbolChange;
             _this.type = 'tradingview';
             _this.setOptions(options, false);
             return _this;
@@ -75,8 +76,6 @@ define(["require", "exports", "./Module", "../Option"], function (require, expor
                     new Option_1.OptionValueLabel('D', '1D'),
                     new Option_1.OptionValueLabel('W', '1W'),
                 ]),
-                new Option_1.Option('hideTopbar', 'check', 'Hide top bar', TradingModule.defaultHideTopbar),
-                new Option_1.Option('hideSidebar', 'check', 'Hide side bar', TradingModule.defaultHideSidebar),
                 new Option_1.Option('style', 'select', 'Style', TradingModule.defaultStyle, [
                     new Option_1.OptionValueLabel('0', 'Bar'),
                     new Option_1.OptionValueLabel('1', 'Candle'),
@@ -89,30 +88,20 @@ define(["require", "exports", "./Module", "../Option"], function (require, expor
                     new Option_1.OptionValueLabel('5', 'Kagi'),
                     new Option_1.OptionValueLabel('6', 'Point and figures'),
                 ]),
+                new Option_1.Option('hideTopbar', 'check', 'Hide top bar', TradingModule.defaultHideTopbar),
+                new Option_1.Option('hideSidebar', 'check', 'Hide side bar', TradingModule.defaultHideSidebar),
+                new Option_1.Option('allowSymbolChange', 'check', 'Allow symbol change (not saved when modifying after inserting)', TradingModule.defaultAllowSymbolChange),
             ];
         };
         TradingModule.prototype.setOption = function (option, refresh) {
             if (refresh === void 0) { refresh = true; }
-            if (option.id == 'symbol')
-                this.symbol = option.value;
-            if (option.id == 'theme')
-                this.theme = option.value;
-            if (option.id == 'timezone')
-                this.timezone = option.value;
-            if (option.id == 'interval')
-                this.interval = option.value;
-            if (option.id == 'hideTopbar')
-                this.hideTopbar = option.value;
-            if (option.id == 'hideSidebar')
-                this.hideSidebar = option.value;
-            if (option.id == 'style')
-                this.style = option.value;
-            console.log(option.value);
+            if (option.id in this)
+                this[option.id] = option.value;
             if (refresh)
                 this.update();
         };
         TradingModule.prototype.update = function () {
-            console.log(this.symbol);
+            console.log('symbol change:' + this.allowSymbolChange);
             $('#' + this.uid + '-content').attr('style', function (i, s) { return s + 'overflow: hidden !important;'; });
             var options = {
                 "container_id": this.uid + '-content',
@@ -125,7 +114,7 @@ define(["require", "exports", "./Module", "../Option"], function (require, expor
                 "locale": navigator.language || 'en',
                 "toolbar_bg": "#f1f3f6",
                 "enable_publishing": false,
-                "allow_symbol_change": false,
+                "allow_symbol_change": this.allowSymbolChange,
                 "show_popup_button": false,
                 "hideideas": true,
                 "referral_id": "7610"
@@ -150,6 +139,7 @@ define(["require", "exports", "./Module", "../Option"], function (require, expor
         TradingModule.defaultTimezone = 'Etc/UTC';
         TradingModule.defaultHideTopbar = false;
         TradingModule.defaultHideSidebar = false;
+        TradingModule.defaultAllowSymbolChange = false;
         TradingModule.defaultStyle = '1';
         return TradingModule;
     }(Module_1.Module));

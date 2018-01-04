@@ -9,6 +9,7 @@ export class TradingModule extends Module{
 	static defaultTimezone = 'Etc/UTC';
 	static defaultHideTopbar = false;
 	static defaultHideSidebar = false;
+	static defaultAllowSymbolChange = false;
 	static defaultStyle = '1';
 
 	symbol : string = TradingModule.defaultSymbol;
@@ -18,6 +19,7 @@ export class TradingModule extends Module{
 	hideTopbar : boolean = TradingModule.defaultHideTopbar;
 	hideSidebar : boolean = TradingModule.defaultHideSidebar;
 	style : boolean = TradingModule.defaultHideSidebar;
+	allowSymbolChange : boolean = TradingModule.defaultAllowSymbolChange;
 
 	constructor(options:Array<Option>=[]){
 		super();
@@ -74,8 +76,6 @@ export class TradingModule extends Module{
 				new OptionValueLabel('D', '1D'),
 				new OptionValueLabel('W', '1W'),
 				]),
-			new Option('hideTopbar', 'check', 'Hide top bar', TradingModule.defaultHideTopbar),
-			new Option('hideSidebar', 'check', 'Hide side bar', TradingModule.defaultHideSidebar),
 			new Option('style', 'select', 'Style', TradingModule.defaultStyle, [
 				new OptionValueLabel('0', 'Bar'),
 				new OptionValueLabel('1', 'Candle'),
@@ -88,24 +88,19 @@ export class TradingModule extends Module{
 				new OptionValueLabel('5', 'Kagi'),
 				new OptionValueLabel('6', 'Point and figures'),
 			]),
+			new Option('hideTopbar', 'check', 'Hide top bar', TradingModule.defaultHideTopbar),
+			new Option('hideSidebar', 'check', 'Hide side bar', TradingModule.defaultHideSidebar),
+			new Option('allowSymbolChange', 'check', 'Allow symbol change (not saved when modifying after inserting)', TradingModule.defaultAllowSymbolChange),
 		]
 	}
 
 	setOption(option: Option, refresh=true) {
-		if(option.id == 'symbol')	this.symbol = option.value;
-		if(option.id == 'theme')	this.theme = option.value;
-		if(option.id == 'timezone')	this.timezone = option.value;
-		if(option.id == 'interval')	this.interval = option.value;
-		if(option.id == 'hideTopbar')	this.hideTopbar = option.value;
-		if(option.id == 'hideSidebar')	this.hideSidebar = option.value;
-		if(option.id == 'style')	this.style = option.value;
-		console.log(option.value);
-
+		if(option.id in this) (<any>this)[option.id] = option.value;
 		if(refresh)this.update();
 	}
 
 	update(){
-		console.log(this.symbol);
+		console.log('symbol change:'+this.allowSymbolChange);
 		$('#'+this.uid+'-content').attr('style', function(i:any,s:any) { return s + 'overflow: hidden !important;' });
 
 		let options : any = {
@@ -119,7 +114,7 @@ export class TradingModule extends Module{
 			"locale": navigator.language || 'en',
 			"toolbar_bg": "#f1f3f6",
 			"enable_publishing": false,
-			"allow_symbol_change": false,
+			"allow_symbol_change": this.allowSymbolChange,
 			"show_popup_button": false,
 			"hideideas": true,
 			"referral_id": "7610"
