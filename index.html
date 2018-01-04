@@ -156,6 +156,7 @@
 		<div class="content">
 			<h3>Done</h3>
 			<ul>
+				<li>Validation button when editing - 2018-01-04</li>
 				<li>Adding configuration base - 2018-01-04</li>
 				<li>Export as file & reload - 2018-01-04</li>
 				<li>Initial version - 2018-01-03</li>
@@ -214,6 +215,7 @@
 	</div>
 
 	<div @click="openSidebar()" class="openSidebar"><i class="fa fa-cog"></i></div>
+	<div @click="toggleEdit(false)" class="toggleEditionBottom" v-if="editable"><i class="fa fa-check"></i></div>
 
 	<div class="pusher">
 

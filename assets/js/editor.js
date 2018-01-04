@@ -65,9 +65,11 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
             })
                 .sidebar('toggle');
         };
-        App.prototype.toggleEdit = function () {
+        App.prototype.toggleEdit = function (openSidebar) {
+            if (openSidebar === void 0) { openSidebar = true; }
             this.editable = !this.editable;
-            this.openSidebar();
+            if (openSidebar)
+                this.openSidebar();
         };
         App.prototype.cellClick = function (cell) {
             if (!cell.used) {

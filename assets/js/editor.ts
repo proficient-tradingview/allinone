@@ -75,9 +75,10 @@ class App extends Vue{
 		;
 	}
 
-	toggleEdit(){
+	toggleEdit(openSidebar : boolean = true){
 		this.editable = !this.editable;
-		this.openSidebar();
+		if(openSidebar)
+			this.openSidebar();
 	}
 
 	cellClick(cell:Cell){

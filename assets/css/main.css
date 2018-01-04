@@ -67,14 +67,28 @@ body{
 }
 
 #app .openSidebar{
+	 position: absolute;
+	 top:0;
+	 z-index: 5555;
+	 font-size:20px;
+	 padding:5px;
+	 background: rgba(0,0,0,0.6);
+	 color:white;
+	 -webkit-border-radius: 3px;
+	 -moz-border-radius: 3px;
+	 border-radius: 3px;
+ }
+
+#app .toggleEditionBottom{
 	position: absolute;
-	top:0;
+	bottom:5px;right:5px;
 	z-index: 5555;
-	font-size:20px;
-	padding:5px;
+	font-size:40px;
+	padding:7px;
 	background: rgba(0,0,0,0.6);
 	color:white;
 	-webkit-border-radius: 3px;
 	-moz-border-radius: 3px;
 	border-radius: 3px;
 }
+
