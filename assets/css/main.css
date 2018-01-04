@@ -81,7 +81,7 @@ body{
 
 #app .toggleEditionBottom{
 	position: absolute;
-	bottom:5px;right:5px;
+	bottom:25px;right:5px;
 	z-index: 5555;
 	font-size:40px;
 	padding:7px;
