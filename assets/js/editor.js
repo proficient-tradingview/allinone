@@ -41,11 +41,15 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
             _this.newModuleType = 'tradingview';
             _this.editable = false;
             var params = Utils_1.default.getSearchParameters();
+            console.log(params);
             if (typeof params.chart !== 'undefined') {
                 _this.buildCompatMultichat(params.chart);
             }
-            else if (typeof params.data !== 'undefined') {
+            else if ("data" in params) {
                 _this.buildFromData(atob(params.data));
+            }
+            else if ("default" in params) {
+                _this.buildDefault(params.default);
             }
             else {
                 _this.editable = true;
@@ -242,6 +246,50 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
                 self.updateAll();
             });
         };
+        App.prototype.buildDefault = function (type) {
+            if (type === void 0) { type = '$'; }
+            console.log('build from default');
+            if (type != '$' && type != '€')
+                type = '$';
+            var self = this;
+            this.grid = [];
+            this.modules = [];
+            this.gridWidth = 2;
+            this.gridHeight = 2;
+            this.recalculateGrid(true, true);
+            if (type == '$') {
+                var btcUsdt = new TradingViewModule_1.TradingModule();
+                btcUsdt.symbol = 'BINANCE:BTCUSDT';
+                this.grid[0][0].moduleUid = btcUsdt.uid;
+                this.modules.push(btcUsdt);
+                var ltcUsdt = new TradingViewModule_1.TradingModule();
+                ltcUsdt.symbol = 'BINANCE:LTCUSDT';
+                this.grid[0][1].moduleUid = ltcUsdt.uid;
+                this.modules.push(ltcUsdt);
+                var ethUsdt = new TradingViewModule_1.TradingModule();
+                ethUsdt.symbol = 'BINANCE:ETHUSDT';
+                this.grid[1][0].moduleUid = ethUsdt.uid;
+                this.modules.push(ethUsdt);
+            }
+            else if (type == '$') {
+                var btcUsdt = new TradingViewModule_1.TradingModule();
+                btcUsdt.symbol = 'BITSTAMP:BTCEUR';
+                this.grid[0][0].moduleUid = btcUsdt.uid;
+                this.modules.push(btcUsdt);
+                var ltcUsdt = new TradingViewModule_1.TradingModule();
+                ltcUsdt.symbol = 'BITSTAMP:LTCEUR';
+                this.grid[0][1].moduleUid = ltcUsdt.uid;
+                this.modules.push(ltcUsdt);
+                var ethUsdt = new TradingViewModule_1.TradingModule();
+                ethUsdt.symbol = 'BITSTAMP:ETHEUR';
+                this.grid[1][0].moduleUid = ethUsdt.uid;
+                this.modules.push(ethUsdt);
+            }
+            this.$nextTick(function () {
+                console.log('update all');
+                self.updateAll();
+            });
+        };
         App.prototype.expandCell = function (cell) {
             cell.full = true;
             this.exportToUrl();
@@ -356,15 +404,6 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
             else if (window.sidebar && window.sidebar.addPanel) {
                 // Firefox version < 23
                 window.sidebar.addPanel(bookmarkTitle, bookmarkURL, '');
-            }
-            else if ((window.sidebar && /Firefox/i.test(navigator.userAgent)) || (window.opera && window.print)) {
-                // Firefox version >= 23 and Opera Hotlist
-                $(this).attr({
-                    href: bookmarkURL,
-                    title: bookmarkTitle,
-                    rel: 'sidebar'
-                }).off(e);
-                return true;
             }
             else if (window.external && ('AddFavorite' in window.external)) {
                 // IE Favorite

@@ -48,10 +48,13 @@ class App extends Vue{
 		super(vuejsDataConstructor);
 
 		let params = Utils.getSearchParameters();
+		console.log(params);
 		if(typeof params.chart !== 'undefined'){
 			this.buildCompatMultichat(params.chart);
-		}else if(typeof params.data !== 'undefined'){
+		}else if("data" in params){
 			this.buildFromData(atob(params.data));
+		}else if("default" in params){
+			this.buildDefault(params.default);
 		}else {
 			this.editable = true;
 			this.recalculateGrid();
@@ -273,6 +276,34 @@ class App extends Vue{
 		});
 	}
 
+	buildDefault(type = '$'){
+		console.log('build from default');
+		if(type != '$' && type != '€')type = '$';
+		let self = this;
+
+		this.grid = [];
+		this.modules = [];
+
+		this.gridWidth = 2;
+		this.gridHeight = 2;
+		this.recalculateGrid(true, true);
+
+		if(type == '$') {
+			let btcUsdt = new TradingModule();			btcUsdt.symbol = 'BINANCE:BTCUSDT';			this.grid[0][0].moduleUid = btcUsdt.uid; 		this.modules.push(btcUsdt);
+			let ltcUsdt = new TradingModule();			ltcUsdt.symbol = 'BINANCE:LTCUSDT';			this.grid[0][1].moduleUid = ltcUsdt.uid;		this.modules.push(ltcUsdt);
+			let ethUsdt = new TradingModule();			ethUsdt.symbol = 'BINANCE:ETHUSDT';			this.grid[1][0].moduleUid = ethUsdt.uid;		this.modules.push(ethUsdt);
+		}else if(type == '$') {
+			let btcUsdt = new TradingModule();			btcUsdt.symbol = 'BITSTAMP:BTCEUR';			this.grid[0][0].moduleUid = btcUsdt.uid;		this.modules.push(btcUsdt);
+			let ltcUsdt = new TradingModule();			ltcUsdt.symbol = 'BITSTAMP:LTCEUR';			this.grid[0][1].moduleUid = ltcUsdt.uid;		this.modules.push(ltcUsdt);
+			let ethUsdt = new TradingModule();			ethUsdt.symbol = 'BITSTAMP:ETHEUR';			this.grid[1][0].moduleUid = ethUsdt.uid;		this.modules.push(ethUsdt);
+		}
+
+		this.$nextTick(function () {
+			console.log('update all');
+			self.updateAll();
+		});
+	}
+
 	expandCell(cell : Cell){
 		cell.full=true;
 		this.exportToUrl();
@@ -389,23 +420,15 @@ class App extends Vue{
 		var bookmarkURL = window.location.href;
 		var bookmarkTitle = document.title;
 
-		if ('addToHomescreen' in window && window.addToHomescreen.isCompatible) {
+		if ('addToHomescreen' in window && (<any>window).addToHomescreen.isCompatible) {
 			// Mobile browsers
-			window.addToHomescreen({ autostart: false, startDelay: 0 }).show(true);
-		} else if (window.sidebar && window.sidebar.addPanel) {
+			(<any>window).addToHomescreen({ autostart: false, startDelay: 0 }).show(true);
+		} else if ((<any>window).sidebar && (<any>window).sidebar.addPanel) {
 			// Firefox version < 23
-			window.sidebar.addPanel(bookmarkTitle, bookmarkURL, '');
-		} else if ((window.sidebar && /Firefox/i.test(navigator.userAgent)) || (window.opera && window.print)) {
-			// Firefox version >= 23 and Opera Hotlist
-			$(this).attr({
-				href: bookmarkURL,
-				title: bookmarkTitle,
-				rel: 'sidebar'
-			}).off(e);
-			return true;
+			(<any>window).sidebar.addPanel(bookmarkTitle, bookmarkURL, '');
 		} else if (window.external && ('AddFavorite' in window.external)) {
 			// IE Favorite
-			window.external.AddFavorite(bookmarkURL, bookmarkTitle);
+			(<any>window).external.AddFavorite(bookmarkURL, bookmarkTitle);
 		} else {
 			// Other browsers (mainly WebKit - Chrome/Safari)
 			alert('Please press ' + (/Mac/i.test(navigator.userAgent) ? 'CMD' : 'Strg') + ' + D to add this page to your favorites.');
