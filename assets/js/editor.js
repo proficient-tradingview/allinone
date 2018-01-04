@@ -422,7 +422,7 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
             }
             else {
                 // Other browsers (mainly WebKit - Chrome/Safari)
-                alert('Please press ' + (/Mac/i.test(navigator.userAgent) ? 'CMD' : 'Strg') + ' + D to add this page to your favorites.');
+                alert('Please press ' + (/Mac/i.test(navigator.userAgent) ? 'Strg' : 'CMD') + ' + D to add this page to your favorites.');
             }
         };
         App.prototype.export = function () {

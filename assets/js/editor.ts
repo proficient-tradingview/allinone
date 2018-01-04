@@ -451,7 +451,7 @@ class App extends Vue{
 			(<any>window).external.AddFavorite(bookmarkURL, bookmarkTitle);
 		} else {
 			// Other browsers (mainly WebKit - Chrome/Safari)
-			alert('Please press ' + (/Mac/i.test(navigator.userAgent) ? 'CMD' : 'Strg') + ' + D to add this page to your favorites.');
+			alert('Please press ' + (/Mac/i.test(navigator.userAgent) ? 'Strg' : 'CMD') + ' + D to add this page to your favorites.');
 		}
 	}
 
