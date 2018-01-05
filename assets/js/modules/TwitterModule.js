@@ -20,6 +20,14 @@ define(["require", "exports", "./Module", "../Option"], function (require, expor
             _this.setOptions(options, false);
             return _this;
         }
+        TwitterModule.prototype.exportToJson = function () {
+            return {
+                type: this.type,
+                uid: this.uid,
+                ref: this.ref,
+                theme: this.theme,
+            };
+        };
         TwitterModule.getOptions = function () {
             return [
                 new Option_1.Option('ref', 'text', 'Symbol', 'https://twitter.com/Capetlevrai'),

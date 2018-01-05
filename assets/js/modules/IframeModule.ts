@@ -12,6 +12,13 @@ export class IframeModule extends Module{
 		this.setOptions(options,false);
 	}
 
+	exportToJson(): any {
+		return {
+			type:this.type,
+			uid:this.uid,
+			href:this.href,
+		};
+	}
 
 	static getOptions(): Option[] {
 		return [

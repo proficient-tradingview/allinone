@@ -22,10 +22,28 @@ export class TradingModule extends Module{
 	style : boolean = TradingModule.defaultHideSidebar;
 	allowSymbolChange : boolean = TradingModule.defaultAllowSymbolChange;
 
+	refreshInterval = 0;
+
 	constructor(options:Array<Option>=[]){
 		super();
 		this.type = 'tradingview';
 		this.setOptions(options,false);
+	}
+
+
+	exportToJson(): any {
+		return {
+			type:this.type,
+			uid:this.uid,
+			symbol:this.symbol,
+			theme:this.theme,
+			interval:this.interval,
+			timezone:this.timezone,
+			hideTopbar:this.hideTopbar,
+			hideSidebar:this.hideSidebar,
+			style:this.style,
+			allowSymbolChange:this.allowSymbolChange,
+		};
 	}
 
 	getLink() : string|null{
@@ -35,6 +53,10 @@ export class TradingModule extends Module{
 		}else{
 			return 'https://www.tradingview.com/chart/?symbol='+this.symbol;
 		}
+	}
+
+	destroy(){
+		if(this.refreshInterval)clearInterval(this.refreshInterval);
 	}
 
 	static getOptions(): Option[] {
@@ -100,6 +122,7 @@ export class TradingModule extends Module{
 	}
 
 	update(config : Configuration){
+		let self = this;
 		$('#'+this.uid+'-content').attr('style', function(i:any,s:any) { return s + 'overflow: hidden !important;' });
 
 		let options : any = {
@@ -129,7 +152,21 @@ export class TradingModule extends Module{
 		if(this.hideTopbar)			options['hide_top_toolbar'] = true;  else options['hide_top_toolbar'] = false;
 		if(!this.hideSidebar)		options['hide_side_toolbar'] = false;
 
-		new TradingView.widget(options);
+		let element = new TradingView.widget(options);
+		console.log(element);
+		element.ready(function(){
+			self.refreshInterval = setInterval(function(){
+				element.getSymbolInfo(function(data:TradingViewInfo){
+					self.symbol = data.exchange+':'+data.name;
+					self.interval = data.interval;
+				});
+			},1000);
+
+			// element.subscribeToQuote(function(data){
+			// 	console.log('subscribeToQuote',data);
+			// });
+		});
+
 	}
 
 	hexToRgbA(hex : string){

@@ -24,10 +24,25 @@ define(["require", "exports", "./Module", "../Option"], function (require, expor
             _this.hideSidebar = TradingModule.defaultHideSidebar;
             _this.style = TradingModule.defaultHideSidebar;
             _this.allowSymbolChange = TradingModule.defaultAllowSymbolChange;
+            _this.refreshInterval = 0;
             _this.type = 'tradingview';
             _this.setOptions(options, false);
             return _this;
         }
+        TradingModule.prototype.exportToJson = function () {
+            return {
+                type: this.type,
+                uid: this.uid,
+                symbol: this.symbol,
+                theme: this.theme,
+                interval: this.interval,
+                timezone: this.timezone,
+                hideTopbar: this.hideTopbar,
+                hideSidebar: this.hideSidebar,
+                style: this.style,
+                allowSymbolChange: this.allowSymbolChange,
+            };
+        };
         TradingModule.prototype.getLink = function () {
             if (this.symbol.indexOf('BINANCE:') === 0) {
                 var currencies = this.symbol.replace('BINANCE:', '');
@@ -36,6 +51,10 @@ define(["require", "exports", "./Module", "../Option"], function (require, expor
             else {
                 return 'https://www.tradingview.com/chart/?symbol=' + this.symbol;
             }
+        };
+        TradingModule.prototype.destroy = function () {
+            if (this.refreshInterval)
+                clearInterval(this.refreshInterval);
         };
         TradingModule.getOptions = function () {
             return [
@@ -98,6 +117,7 @@ define(["require", "exports", "./Module", "../Option"], function (require, expor
                 this[option.id] = option.value;
         };
         TradingModule.prototype.update = function (config) {
+            var self = this;
             $('#' + this.uid + '-content').attr('style', function (i, s) { return s + 'overflow: hidden !important;'; });
             var options = {
                 "container_id": this.uid + '-content',
@@ -122,7 +142,19 @@ define(["require", "exports", "./Module", "../Option"], function (require, expor
                 options['hide_top_toolbar'] = false;
             if (!this.hideSidebar)
                 options['hide_side_toolbar'] = false;
-            new TradingView.widget(options);
+            var element = new TradingView.widget(options);
+            console.log(element);
+            element.ready(function () {
+                self.refreshInterval = setInterval(function () {
+                    element.getSymbolInfo(function (data) {
+                        self.symbol = data.exchange + ':' + data.name;
+                        self.interval = data.interval;
+                    });
+                }, 1000);
+                // element.subscribeToQuote(function(data){
+                // 	console.log('subscribeToQuote',data);
+                // });
+            });
         };
         TradingModule.prototype.hexToRgbA = function (hex) {
             var c;

@@ -6,6 +6,7 @@ define(["require", "exports", "../uuid"], function (require, exports, uuid_1) {
             this.type = 'tradingview';
             this.uid = uuid_1.Uuid.v4();
         }
+        Module.prototype.destroy = function () { };
         Module.prototype.getLink = function () { return null; };
         Module.prototype.update = function (config) { };
         Module.getOptions = function () {

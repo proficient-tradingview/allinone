@@ -20,6 +20,13 @@ define(["require", "exports", "./Module", "../Option"], function (require, expor
             _this.setOptions(options, false);
             return _this;
         }
+        IframeModule.prototype.exportToJson = function () {
+            return {
+                type: this.type,
+                uid: this.uid,
+                href: this.href,
+            };
+        };
         IframeModule.getOptions = function () {
             return [
                 new Option_1.Option('href', 'text', 'URL', 'https://quickfingerstraders.slack.com'),

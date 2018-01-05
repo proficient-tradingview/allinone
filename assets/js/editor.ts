@@ -48,8 +48,11 @@ class App extends Vue{
 	@VueVar()
 	configuration : Configuration;
 
+	intervalSaveCurrentConfig = 0;
+
 	constructor(containerName : string, vuejsDataConstructor:VueConstructObject|string=''){
 		super(vuejsDataConstructor);
+		let self = this;
 		this.configuration = new Configuration();
 
 		let params = Utils.getSearchParameters();
@@ -66,6 +69,11 @@ class App extends Vue{
 		}
 
 		this.initDragAndDrop();
+
+		//start auto backup to url : save modules parameters if they change
+		this.intervalSaveCurrentConfig = setInterval(function(){
+			self.exportToUrl(true);
+		}, 2000);
 	}
 
 	initDragAndDrop(){
@@ -219,9 +227,16 @@ class App extends Vue{
 		;
 	}
 
+	destroyAllModules(){
+		for(let module of this.modules){
+			module.destroy();
+		}
+		this.modules = [];
+	}
+
 	recalculateGrid(clearGrid=false,clearModules=false){
 		if(clearModules) {
-			this.modules = [];
+			this.destroyAllModules();
 		}
 		if(clearGrid) {
 			this.grid = [];
@@ -318,7 +333,7 @@ class App extends Vue{
 		console.log(data);
 
 		this.grid = [];
-		this.modules = [];
+		this.destroyAllModules();
 
 		for(let row of data.grid){
 			let cells = [];
@@ -364,7 +379,7 @@ class App extends Vue{
 		let self = this;
 
 		this.grid = [];
-		this.modules = [];
+		this.destroyAllModules();
 
 		this.gridWidth = 2;
 		this.gridHeight = 2;
@@ -413,6 +428,7 @@ class App extends Vue{
 
 		for(let iModule = 0; iModule < this.modules.length; ++iModule){
 			if(this.modules[iModule].uid == cell.moduleUid){
+				this.modules[iModule].destroy();
 				this.modules.splice(iModule, 1);
 				break;
 			}
@@ -519,21 +535,28 @@ class App extends Vue{
 	}
 
 	export(){
+		let modules : Array<any >= [];
+		for(let module of this.modules){
+			modules.push(module.exportToJson())
+		}
+
 		let ojson = {
 			version:1,
 			grid:this.grid,
-			modules:this.modules,
+			modules:modules,
 			configuration:this.configuration
 		};
 
 		let json = JSON.stringify(ojson);
-		console.log(json);
 		return json;
 	}
 
-	exportToUrl(){
+	exportToUrl(replace=false){
 		let json = this.export();
-		window.history.pushState(null,'','?data='+btoa(json));
+		if(replace)
+			window.history.replaceState(null,'','?data='+btoa(json));
+		else
+			window.history.pushState(null,'','?data='+btoa(json));
 	}
 
 	saveConfig(){

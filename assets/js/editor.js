@@ -40,6 +40,8 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
             _this.currentOptions = [];
             _this.newModuleType = 'tradingview';
             _this.editable = false;
+            _this.intervalSaveCurrentConfig = 0;
+            var self = _this;
             _this.configuration = new Configuration_1.Configuration();
             var params = Utils_1.default.getSearchParameters();
             console.log(params);
@@ -57,6 +59,10 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
                 _this.recalculateGrid();
             }
             _this.initDragAndDrop();
+            //start auto backup to url : save modules parameters if they change
+            _this.intervalSaveCurrentConfig = setInterval(function () {
+                self.exportToUrl(true);
+            }, 2000);
             return _this;
         }
         App.prototype.initDragAndDrop = function () {
@@ -196,11 +202,18 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
             $('#roadmapModal')
                 .modal('show');
         };
+        App.prototype.destroyAllModules = function () {
+            for (var _i = 0, _a = this.modules; _i < _a.length; _i++) {
+                var module = _a[_i];
+                module.destroy();
+            }
+            this.modules = [];
+        };
         App.prototype.recalculateGrid = function (clearGrid, clearModules) {
             if (clearGrid === void 0) { clearGrid = false; }
             if (clearModules === void 0) { clearModules = false; }
             if (clearModules) {
-                this.modules = [];
+                this.destroyAllModules();
             }
             if (clearGrid) {
                 this.grid = [];
@@ -278,7 +291,7 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
             var self = this;
             console.log(data);
             this.grid = [];
-            this.modules = [];
+            this.destroyAllModules();
             for (var _i = 0, _a = data.grid; _i < _a.length; _i++) {
                 var row = _a[_i];
                 var cells = [];
@@ -323,7 +336,7 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
                 type = '$';
             var self = this;
             this.grid = [];
-            this.modules = [];
+            this.destroyAllModules();
             this.gridWidth = 2;
             this.gridHeight = 2;
             this.recalculateGrid(true, true);
@@ -384,6 +397,7 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
             }
             for (var iModule = 0; iModule < this.modules.length; ++iModule) {
                 if (this.modules[iModule].uid == cell.moduleUid) {
+                    this.modules[iModule].destroy();
                     this.modules.splice(iModule, 1);
                     break;
                 }
@@ -486,19 +500,27 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
             }
         };
         App.prototype.export = function () {
+            var modules = [];
+            for (var _i = 0, _a = this.modules; _i < _a.length; _i++) {
+                var module = _a[_i];
+                modules.push(module.exportToJson());
+            }
             var ojson = {
                 version: 1,
                 grid: this.grid,
-                modules: this.modules,
+                modules: modules,
                 configuration: this.configuration
             };
             var json = JSON.stringify(ojson);
-            console.log(json);
             return json;
         };
-        App.prototype.exportToUrl = function () {
+        App.prototype.exportToUrl = function (replace) {
+            if (replace === void 0) { replace = false; }
             var json = this.export();
-            window.history.pushState(null, '', '?data=' + btoa(json));
+            if (replace)
+                window.history.replaceState(null, '', '?data=' + btoa(json));
+            else
+                window.history.pushState(null, '', '?data=' + btoa(json));
         };
         App.prototype.saveConfig = function () {
             var blob = new Blob([this.export()], { type: "application/json;charset=utf-8" });

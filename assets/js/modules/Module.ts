@@ -9,11 +9,12 @@ export abstract class Module{
 	type:ModuleType='tradingview';
 	uid:string = Uuid.v4();
 
-	width : 1;
-	height : 1;
-
 	protected constructor() {
 	}
+
+	abstract exportToJson() : any;
+
+	destroy(){}
 
 	getLink() : string|null{return null;}
 

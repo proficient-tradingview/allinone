@@ -13,6 +13,14 @@ export class TwitterModule extends Module{
 		this.setOptions(options,false);
 	}
 
+	exportToJson(): any {
+		return {
+			type:this.type,
+			uid:this.uid,
+			ref:this.ref,
+			theme:this.theme,
+		};
+	}
 
 	static getOptions(): Option[] {
 		return [
