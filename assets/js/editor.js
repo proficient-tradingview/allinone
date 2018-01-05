@@ -524,7 +524,21 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
         };
         App.prototype.saveConfig = function () {
             var blob = new Blob([this.export()], { type: "application/json;charset=utf-8" });
-            saveAs(blob, 'state.json');
+            var now = new Date();
+            var nowFormatted = now.getFullYear() + '-';
+            if (now.getMonth() + 1 < 10)
+                nowFormatted += '0';
+            nowFormatted += (now.getMonth() + 1) + '-';
+            if (now.getDate() < 10)
+                nowFormatted += '0';
+            nowFormatted += now.getDate() + ' ';
+            if (now.getHours() < 10)
+                nowFormatted += '0';
+            nowFormatted += now.getHours() + ':';
+            if (now.getMinutes() < 10)
+                nowFormatted += '0';
+            nowFormatted += now.getMinutes();
+            saveAs(blob, 'allinone-' + nowFormatted + '.json');
         };
         App.prototype.loadConfig = function () {
             var self = this;
