@@ -24,6 +24,7 @@ define(["require", "exports", "./Module", "../Option"], function (require, expor
             _this.hideSidebar = TradingModule.defaultHideSidebar;
             _this.style = TradingModule.defaultHideSidebar;
             _this.allowSymbolChange = TradingModule.defaultAllowSymbolChange;
+            _this.saveImage = TradingModule.defaultSaveImage;
             _this.refreshInterval = 0;
             _this.type = 'tradingview';
             _this.setOptions(options, false);
@@ -41,6 +42,7 @@ define(["require", "exports", "./Module", "../Option"], function (require, expor
                 hideSidebar: this.hideSidebar,
                 style: this.style,
                 allowSymbolChange: this.allowSymbolChange,
+                saveImage: this.saveImage,
             };
         };
         TradingModule.prototype.getLink = function () {
@@ -109,6 +111,7 @@ define(["require", "exports", "./Module", "../Option"], function (require, expor
                 ]),
                 new Option_1.Option('hideTopbar', 'check', 'Hide top bar', TradingModule.defaultHideTopbar),
                 new Option_1.Option('hideSidebar', 'check', 'Hide side bar', TradingModule.defaultHideSidebar),
+                new Option_1.Option('saveImage', 'check', 'Save image button', TradingModule.defaultSaveImage),
                 new Option_1.Option('allowSymbolChange', 'check', 'Allow symbol change (not saved when modifying after inserting)', TradingModule.defaultAllowSymbolChange),
             ];
         };
@@ -143,6 +146,8 @@ define(["require", "exports", "./Module", "../Option"], function (require, expor
                 options['hide_top_toolbar'] = false;
             if (!this.hideSidebar)
                 options['hide_side_toolbar'] = false;
+            if (!this.saveImage)
+                options['save_image'] = false;
             var element = new TradingView.widget(options);
             console.log(element);
             element.ready(function () {
@@ -176,6 +181,7 @@ define(["require", "exports", "./Module", "../Option"], function (require, expor
         TradingModule.defaultHideTopbar = false;
         TradingModule.defaultHideSidebar = false;
         TradingModule.defaultAllowSymbolChange = false;
+        TradingModule.defaultSaveImage = false;
         TradingModule.defaultStyle = '1';
         return TradingModule;
     }(Module_1.Module));

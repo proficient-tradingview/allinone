@@ -520,18 +520,45 @@ class App extends Vue{
 	}
 
 	changeCellSize(cell : Cell, direction : 'down'|'up'|'left'|'right'){
+		let collide = false;
+
+
 		for(let iRow = 0; iRow < this.grid.length;++iRow){
 			for(let iColumn = 0; iColumn < this.grid[iRow].length; ++iColumn){
 				let searchCell = this.grid[iRow][iColumn];
 				if(searchCell === cell){
-					for(let x = 0; x < cell.size.x; ++x){
-						for(let y = 0; y < cell.size.y; ++y) {
-							this.grid[iRow+y][iColumn+x].used = false;
-						}
+					if(direction == 'down') {
+						if(iRow+cell.size.y < this.grid.length){
+							for (let x = 0; x < cell.size.x; ++x) {
+								if(this.grid[iRow+1][iColumn + x].used){
+									collide = true;
+								}
+							}
+						}else
+							collide = true;
+					}else if(direction == 'right') {
+						if(iColumn+cell.size.x < this.grid[iRow].length){
+							for (let y = 0; y < cell.size.x; ++y) {
+								if(this.grid[iRow+y][iColumn+1].used){
+									collide = true;
+								}
+							}
+						}else
+							collide = true;
 					}
+
+					if(!collide)
+						for(let x = 0; x < cell.size.x; ++x){//clear used cells
+							for(let y = 0; y < cell.size.y; ++y) {
+								this.grid[iRow+y][iColumn+x].used = false;
+							}
+						}
 				}
 			}
 		}
+
+		if(collide)
+			return;
 
 		if(direction == 'up'){
 			if(cell.size.y > 1)
@@ -545,10 +572,8 @@ class App extends Vue{
 			for(let iRow = 0; iRow < this.grid.length;++iRow){
 				for(let iColumn = 0; iColumn < this.grid[iRow].length; ++iColumn){
 					let searchCell = this.grid[iRow][iColumn];
-					if(searchCell === cell){
-						if(iRow+cell.size.y < this.grid.length){
-							cell.size.y += 1;
-						}
+					if(searchCell === cell){//collision already done
+						cell.size.y += 1;
 					}
 				}
 			}
@@ -557,15 +582,14 @@ class App extends Vue{
 			for(let iRow = 0; iRow < this.grid.length;++iRow){
 				for(let iColumn = 0; iColumn < this.grid[iRow].length; ++iColumn){
 					let searchCell = this.grid[iRow][iColumn];
-					if(searchCell === cell){
-						if(iColumn+cell.size.x < this.grid[iRow].length){
-							cell.size.x += 1;
-						}
+					if(searchCell === cell){//collision already done
+						cell.size.x += 1;
 					}
 				}
 			}
 		}
 
+		//set cells as used
 		for(let iRow = 0; iRow < this.grid.length;++iRow){
 			for(let iColumn = 0; iColumn < this.grid[iRow].length; ++iColumn){
 				let searchCell = this.grid[iRow][iColumn];
@@ -591,6 +615,12 @@ class App extends Vue{
 					let searchCell = this.grid[iRow][iColumn];
 					if(searchCell === cell){
 						if(iRow+cell.size.y < this.grid.length){
+							for (let x = 0; x < cell.size.x; ++x) {
+								if(this.grid[iRow+1][iColumn + x].used){
+									return false;
+								}
+							}
+
 							return true;
 						}
 					}
@@ -603,6 +633,11 @@ class App extends Vue{
 					let searchCell = this.grid[iRow][iColumn];
 					if(searchCell === cell){
 						if(iColumn+cell.size.x < this.grid[iRow].length){
+							for (let y = 0; y < cell.size.x; ++y) {
+								if(this.grid[iRow+y][iColumn+1].used){
+									return false;
+								}
+							}
 							return true;
 						}
 					}

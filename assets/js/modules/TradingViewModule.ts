@@ -11,6 +11,7 @@ export class TradingModule extends Module{
 	static defaultHideTopbar = false;
 	static defaultHideSidebar = false;
 	static defaultAllowSymbolChange = false;
+	static defaultSaveImage = false;
 	static defaultStyle = '1';
 
 	symbol : string = TradingModule.defaultSymbol;
@@ -21,6 +22,7 @@ export class TradingModule extends Module{
 	hideSidebar : boolean = TradingModule.defaultHideSidebar;
 	style : boolean = TradingModule.defaultHideSidebar;
 	allowSymbolChange : boolean = TradingModule.defaultAllowSymbolChange;
+	saveImage : boolean = TradingModule.defaultSaveImage;
 
 	refreshInterval = 0;
 
@@ -43,6 +45,7 @@ export class TradingModule extends Module{
 			hideSidebar:this.hideSidebar,
 			style:this.style,
 			allowSymbolChange:this.allowSymbolChange,
+			saveImage:this.saveImage,
 		};
 	}
 
@@ -113,6 +116,7 @@ export class TradingModule extends Module{
 			]),
 			new Option('hideTopbar', 'check', 'Hide top bar', TradingModule.defaultHideTopbar),
 			new Option('hideSidebar', 'check', 'Hide side bar', TradingModule.defaultHideSidebar),
+			new Option('saveImage', 'check', 'Save image button', TradingModule.defaultSaveImage),
 			new Option('allowSymbolChange', 'check', 'Allow symbol change (not saved when modifying after inserting)', TradingModule.defaultAllowSymbolChange),
 		]
 	}
@@ -152,6 +156,7 @@ export class TradingModule extends Module{
 
 		if(this.hideTopbar)			options['hide_top_toolbar'] = true;  else options['hide_top_toolbar'] = false;
 		if(!this.hideSidebar)		options['hide_side_toolbar'] = false;
+		if(!this.saveImage)		options['save_image'] = false;
 
 		let element = new TradingView.widget(options);
 		console.log(element);
