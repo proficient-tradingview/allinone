@@ -156,6 +156,7 @@
 		<div class="content">
 			<h3>Done</h3>
 			<ul>
+				<li>Modifying grid size doesn't delete modules anymore & adding grid size for HdpiScreens - 2018-01-05</li>
 				<li>Change save filename to be easier to remember - 2018-01-05</li>
 				<li>Automatic save on url : detect TradingView modifications (interval/exchange) - 2018-01-05</li>
 				<li>Adding drag&drop loading for a save - 2018-01-05</li>
@@ -235,17 +236,17 @@
 					:style="'left:'+(iColumn*100/row.length)+'%;width:'+(100/row.length*cell.size.x)+'%;top:'+(iRow*100/grid.length)+'%;height:'+(100/grid.length*cell.size.y)+'%'"
 					:id="cell.moduleUid"
 			>
-				<div :id="cell.moduleUid+'-content'" style="width:100%;height:100%"></div>
+				<div :id="cell.moduleUid+'-content'" style="width:100%;height:100%" class="content"></div>
 				<div :id="cell.moduleUid+'-actions'" class="actions" >
 					<span class="remove ui button" @click="removeModule(cell)" v-if="editable" ><i class="fa fa-remove"></i></span>
 					<span class="expand ui button" @click="expandCell(cell)" v-if="!cell.full"><i class="fa fa-expand "></i></span>
 					<span class="expand ui button" @click="shortCell(cell)" v-else=""><i class="fa fa-compress "></i></span>
 					<span class="expand ui button" @click="openExternal(cell)" ><i class="fa fa-external-link "></i></span>
 
-					<span class="expand ui button" @click="changeCellSize(cell, 'down')" v-if="editable"><i class="fa fa-arrow-down"></i></span>
-					<span class="expand ui button" @click="changeCellSize(cell, 'up')" v-if="editable"><i class="fa fa-arrow-up"></i></span>
-					<span class="expand ui button" @click="changeCellSize(cell, 'left')" v-if="editable"><i class="fa fa-arrow-left"></i></span>
-					<span class="expand ui button" @click="changeCellSize(cell, 'right')" v-if="editable"><i class="fa fa-arrow-right"></i></span>
+					<span class="expand ui button" @click="changeCellSize(cell, 'down')" v-if="editable && canGrowCell(cell, 'down')"><i class="fa fa-arrow-down"></i></span>
+					<span class="expand ui button" @click="changeCellSize(cell, 'up')" v-if="editable && cell.size.y > 1"><i class="fa fa-arrow-up"></i></span>
+					<span class="expand ui button" @click="changeCellSize(cell, 'left')" v-if="editable && cell.size.x > 1"><i class="fa fa-arrow-left"></i></span>
+					<span class="expand ui button" @click="changeCellSize(cell, 'right')" v-if="editable && canGrowCell(cell, 'right')"><i class="fa fa-arrow-right"></i></span>
 				</div>
 			</div>
 			<div
@@ -253,7 +254,6 @@
 					class="cell clickToAdd ui button"
 					:style="'left:'+(iColumn*100/row.length)+'%;width:'+(100/row.length)+'%;top:'+(iRow*100/grid.length)+'%;height:'+(100/grid.length*cell.size.y)+'%'"
 					@click="cellClick(cell)"
-
 			>
 				<span>Click to add</span>
 			</div>

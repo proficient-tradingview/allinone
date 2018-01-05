@@ -122,6 +122,7 @@ export class TradingModule extends Module{
 	}
 
 	update(config : Configuration){
+		this.destroy();
 		let self = this;
 		$('#'+this.uid+'-content').attr('style', function(i:any,s:any) { return s + 'overflow: hidden !important;' });
 

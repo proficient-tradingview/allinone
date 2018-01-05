@@ -117,6 +117,7 @@ define(["require", "exports", "./Module", "../Option"], function (require, expor
                 this[option.id] = option.value;
         };
         TradingModule.prototype.update = function (config) {
+            this.destroy();
             var self = this;
             $('#' + this.uid + '-content').attr('style', function (i, s) { return s + 'overflow: hidden !important;'; });
             var options = {

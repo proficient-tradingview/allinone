@@ -31,8 +31,8 @@ class App extends Vue{
 	@VueVar()
 	gridHeight = 2;
 
-	@VueVar() gridMaxWidth : number = 10;
-	@VueVar() gridMaxHeight : number = 10;
+	@VueVar() gridMaxWidth : number = 20;
+	@VueVar() gridMaxHeight : number = 20;
 
 	@VueVar()
 	modules : Array<Module> = [];
@@ -235,7 +235,8 @@ class App extends Vue{
 	}
 
 	recalculateGrid(clearGrid=false,clearModules=false){
-		if(clearModules) {
+		console.log('---------------------------');
+		/*if(clearModules) {
 			this.destroyAllModules();
 		}
 		if(clearGrid) {
@@ -248,7 +249,72 @@ class App extends Vue{
 				cells.push(new Cell());
 			}
 			this.grid.push(cells);
+		}*/
+
+		if(this.gridHeight > this.grid.length){//add rows
+			for(let i = this.grid.length; i < this.gridHeight; ++i){
+				let cells = [];
+				for(let iColumn = 0; iColumn < this.gridWidth; ++iColumn){
+					cells.push(new Cell());
+				}
+				this.grid.push(cells);
+			}
 		}
+
+		for(let iRow = 0; iRow < this.grid.length; ++iRow){//adding or deleting columns on rows
+			console.log('row:',iRow, this.grid[iRow].length,this.gridWidth);
+			if(this.grid[iRow].length < this.gridWidth){
+				console.log('Adding rows...');
+				let start = this.grid[iRow].length;
+				for(let iColumn = start; iColumn < this.gridWidth; ++iColumn) {
+					this.grid[iRow].push(new Cell());
+					console.log('Adding a column on row '+iRow);
+				}
+			}else if(this.grid[iRow].length > this.gridWidth){
+				let end = this.grid[iRow].length;
+				let toRemove = this.grid[iRow].length-this.gridWidth;
+				console.log('Removing '+toRemove+' on row '+iRow);
+				for(let iColumn = this.gridWidth; iColumn < end; ++iColumn){
+					if(this.grid[iRow][iColumn].moduleUid !== null) {
+						console.log('Deleting module on row '+iRow+' column '+iColumn);
+						this.removeModule(this.grid[iRow][iColumn]);
+					}
+				}
+				for(let iColumn = 0; iColumn < this.gridWidth; ++iColumn){
+					if(this.grid[iRow][iColumn].moduleUid !== null) {
+						if(this.grid[iRow][iColumn].size.x+iColumn >= this.gridWidth){
+							this.grid[iRow][iColumn].size.x = this.gridWidth-iColumn;
+						}
+					}
+				}
+				this.grid[iRow].splice(this.gridWidth, this.grid[iRow].length-this.gridWidth);
+			}
+		}
+
+		if(this.gridHeight < this.grid.length) {//removing rows
+			let countRowsToRemove = this.grid.length-this.gridHeight;
+			console.log('Removing '+countRowsToRemove+' rows');
+
+			for(let iRow = this.gridHeight;iRow < this.grid.length;++iRow){
+				for(let iColumn = 0; iColumn < this.grid[iRow].length; ++iColumn){
+					if(this.grid[iRow][iColumn].moduleUid !== null) {
+						console.log('Deleting module on row '+iRow+' column '+iColumn);
+						this.removeModule(this.grid[iRow][iColumn]);
+					}
+				}
+			}
+
+			for(let iRow = 0;iRow < this.gridHeight;++iRow){
+				for(let iColumn = 0; iColumn < this.grid[iRow].length; ++iColumn){
+					if(this.grid[iRow][iColumn].size.y+iRow >= this.gridHeight){
+						this.grid[iRow][iColumn].size.y = this.gridHeight-iRow;
+					}
+				}
+			}
+
+			this.grid.splice(this.gridHeight, countRowsToRemove);
+		}
+
 
 	}
 
@@ -269,7 +335,6 @@ class App extends Vue{
 			$('#app .ui.checkbox').checkbox();
 		});
 	}
-
 
 	buildCompatMultichat(charts : string[]){
 		let self = this;
@@ -334,6 +399,8 @@ class App extends Vue{
 
 		this.grid = [];
 		this.destroyAllModules();
+		this.gridHeight = data.grid.length;
+		this.gridWidth = data.grid.length > 0 ? data.grid[0].length : 2;
 
 		for(let row of data.grid){
 			let cells = [];
@@ -513,6 +580,37 @@ class App extends Vue{
 		}
 
 		this.exportToUrl();
+	}
+
+
+
+	canGrowCell(cell : Cell, direction : 'down'|'right'){
+		if(direction == 'down'){
+			for(let iRow = 0; iRow < this.grid.length;++iRow){
+				for(let iColumn = 0; iColumn < this.grid[iRow].length; ++iColumn){
+					let searchCell = this.grid[iRow][iColumn];
+					if(searchCell === cell){
+						if(iRow+cell.size.y < this.grid.length){
+							return true;
+						}
+					}
+				}
+			}
+		}
+		if(direction === 'right') {
+			for(let iRow = 0; iRow < this.grid.length;++iRow){
+				for(let iColumn = 0; iColumn < this.grid[iRow].length; ++iColumn){
+					let searchCell = this.grid[iRow][iColumn];
+					if(searchCell === cell){
+						if(iColumn+cell.size.x < this.grid[iRow].length){
+							return true;
+						}
+					}
+				}
+			}
+		}
+
+		return false;
 	}
 
 	addToBookmark(){

@@ -34,8 +34,8 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
             _this.grid = [];
             _this.gridWidth = 2;
             _this.gridHeight = 2;
-            _this.gridMaxWidth = 10;
-            _this.gridMaxHeight = 10;
+            _this.gridMaxWidth = 20;
+            _this.gridMaxHeight = 20;
             _this.modules = [];
             _this.currentOptions = [];
             _this.newModuleType = 'tradingview';
@@ -212,19 +212,79 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
         App.prototype.recalculateGrid = function (clearGrid, clearModules) {
             if (clearGrid === void 0) { clearGrid = false; }
             if (clearModules === void 0) { clearModules = false; }
-            if (clearModules) {
+            console.log('---------------------------');
+            /*if(clearModules) {
                 this.destroyAllModules();
             }
-            if (clearGrid) {
+            if(clearGrid) {
                 this.grid = [];
             }
             this.$forceUpdate();
-            for (var i = 0; i < this.gridHeight; ++i) {
-                var cells = [];
-                for (var j = 0; j < this.gridWidth; ++j) {
+            for(let i = 0; i < this.gridHeight; ++i){
+                let cells = [];
+                for(let j = 0; j < this.gridWidth; ++j){
                     cells.push(new Cell());
                 }
                 this.grid.push(cells);
+            }*/
+            if (this.gridHeight > this.grid.length) {
+                for (var i = this.grid.length; i < this.gridHeight; ++i) {
+                    var cells = [];
+                    for (var iColumn = 0; iColumn < this.gridWidth; ++iColumn) {
+                        cells.push(new Cell());
+                    }
+                    this.grid.push(cells);
+                }
+            }
+            for (var iRow = 0; iRow < this.grid.length; ++iRow) {
+                console.log('row:', iRow, this.grid[iRow].length, this.gridWidth);
+                if (this.grid[iRow].length < this.gridWidth) {
+                    console.log('Adding rows...');
+                    var start = this.grid[iRow].length;
+                    for (var iColumn = start; iColumn < this.gridWidth; ++iColumn) {
+                        this.grid[iRow].push(new Cell());
+                        console.log('Adding a column on row ' + iRow);
+                    }
+                }
+                else if (this.grid[iRow].length > this.gridWidth) {
+                    var end = this.grid[iRow].length;
+                    var toRemove = this.grid[iRow].length - this.gridWidth;
+                    console.log('Removing ' + toRemove + ' on row ' + iRow);
+                    for (var iColumn = this.gridWidth; iColumn < end; ++iColumn) {
+                        if (this.grid[iRow][iColumn].moduleUid !== null) {
+                            console.log('Deleting module on row ' + iRow + ' column ' + iColumn);
+                            this.removeModule(this.grid[iRow][iColumn]);
+                        }
+                    }
+                    for (var iColumn = 0; iColumn < this.gridWidth; ++iColumn) {
+                        if (this.grid[iRow][iColumn].moduleUid !== null) {
+                            if (this.grid[iRow][iColumn].size.x + iColumn >= this.gridWidth) {
+                                this.grid[iRow][iColumn].size.x = this.gridWidth - iColumn;
+                            }
+                        }
+                    }
+                    this.grid[iRow].splice(this.gridWidth, this.grid[iRow].length - this.gridWidth);
+                }
+            }
+            if (this.gridHeight < this.grid.length) {
+                var countRowsToRemove = this.grid.length - this.gridHeight;
+                console.log('Removing ' + countRowsToRemove + ' rows');
+                for (var iRow = this.gridHeight; iRow < this.grid.length; ++iRow) {
+                    for (var iColumn = 0; iColumn < this.grid[iRow].length; ++iColumn) {
+                        if (this.grid[iRow][iColumn].moduleUid !== null) {
+                            console.log('Deleting module on row ' + iRow + ' column ' + iColumn);
+                            this.removeModule(this.grid[iRow][iColumn]);
+                        }
+                    }
+                }
+                for (var iRow = 0; iRow < this.gridHeight; ++iRow) {
+                    for (var iColumn = 0; iColumn < this.grid[iRow].length; ++iColumn) {
+                        if (this.grid[iRow][iColumn].size.y + iRow >= this.gridHeight) {
+                            this.grid[iRow][iColumn].size.y = this.gridHeight - iRow;
+                        }
+                    }
+                }
+                this.grid.splice(this.gridHeight, countRowsToRemove);
             }
         };
         App.prototype.newModuleTypeWatch = function () {
@@ -292,6 +352,8 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
             console.log(data);
             this.grid = [];
             this.destroyAllModules();
+            this.gridHeight = data.grid.length;
+            this.gridWidth = data.grid.length > 0 ? data.grid[0].length : 2;
             for (var _i = 0, _a = data.grid; _i < _a.length; _i++) {
                 var row = _a[_i];
                 var cells = [];
@@ -478,6 +540,33 @@ define(["require", "exports", "./VueAnnotate", "./modules/TradingViewModule", ".
                 }
             }
             this.exportToUrl();
+        };
+        App.prototype.canGrowCell = function (cell, direction) {
+            if (direction == 'down') {
+                for (var iRow = 0; iRow < this.grid.length; ++iRow) {
+                    for (var iColumn = 0; iColumn < this.grid[iRow].length; ++iColumn) {
+                        var searchCell = this.grid[iRow][iColumn];
+                        if (searchCell === cell) {
+                            if (iRow + cell.size.y < this.grid.length) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            if (direction === 'right') {
+                for (var iRow = 0; iRow < this.grid.length; ++iRow) {
+                    for (var iColumn = 0; iColumn < this.grid[iRow].length; ++iColumn) {
+                        var searchCell = this.grid[iRow][iColumn];
+                        if (searchCell === cell) {
+                            if (iColumn + cell.size.x < this.grid[iRow].length) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            return false;
         };
         App.prototype.addToBookmark = function () {
             var bookmarkURL = window.location.href;
