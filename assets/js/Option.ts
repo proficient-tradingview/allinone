@@ -1,4 +1,4 @@
-export type OptionType = 'text'|'select'|'check';
+export type OptionType = 'text'|'select'|'select_multiple'|'check';
 
 export class OptionValueLabel{
 	value : string = '';

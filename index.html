@@ -128,6 +128,12 @@
 							<option v-for="value of option.values" :value="value.value" :key="value.value">{{value.label}}</option>
 						</select>
 					</template>
+					<template v-if="option.type=='select_multiple'" >
+						<label>{{option.label}}</label>
+						<select v-model="option.value" multiple="multiple" class="ui fluid dropdown">
+							<option v-for="value of option.values" :value="value.value" :key="value.value">{{value.label}}</option>
+						</select>
+					</template>
 					<template v-if="option.type=='check'" >
 						<div class="ui toggle checkbox">
 							<input type="checkbox" class="hidden" v-model="option.value">

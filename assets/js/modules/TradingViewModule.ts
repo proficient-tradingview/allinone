@@ -13,6 +13,7 @@ export class TradingModule extends Module{
 	static defaultAllowSymbolChange = false;
 	static defaultSaveImage = false;
 	static defaultStyle = '1';
+	static defaultStudies = [];
 
 	symbol : string = TradingModule.defaultSymbol;
 	theme : string = TradingModule.defaultTheme;
@@ -23,6 +24,7 @@ export class TradingModule extends Module{
 	style : boolean = TradingModule.defaultHideSidebar;
 	allowSymbolChange : boolean = TradingModule.defaultAllowSymbolChange;
 	saveImage : boolean = TradingModule.defaultSaveImage;
+	studies : Array<string> = TradingModule.defaultStudies;
 
 	refreshInterval = 0;
 
@@ -46,6 +48,7 @@ export class TradingModule extends Module{
 			style:this.style,
 			allowSymbolChange:this.allowSymbolChange,
 			saveImage:this.saveImage,
+			studies:this.studies,
 		};
 	}
 
@@ -114,6 +117,10 @@ export class TradingModule extends Module{
 				new OptionValueLabel('5', 'Kagi'),
 				new OptionValueLabel('6', 'Point and figures'),
 			]),
+			new Option('studies', 'select_multiple', 'Studies', TradingModule.defaultStudies, [
+				new OptionValueLabel('RSI@tv-basicstudies', 'Relative Strengh index'),
+				new OptionValueLabel('ACCD@tv-basicstudies', 'Accumulation/Distribution'),
+			]),
 			new Option('hideTopbar', 'check', 'Hide top bar', TradingModule.defaultHideTopbar),
 			new Option('hideSidebar', 'check', 'Hide side bar', TradingModule.defaultHideSidebar),
 			new Option('saveImage', 'check', 'Save image button', TradingModule.defaultSaveImage),
@@ -145,6 +152,7 @@ export class TradingModule extends Module{
 			"allow_symbol_change": this.allowSymbolChange,
 			"show_popup_button": false,
 			"hideideas": true,
+			"studies": this.studies,
 			// "referral_id": "7610"
 			/*"details": true,
 			"hidevolume":0,

@@ -25,6 +25,7 @@ define(["require", "exports", "./Module", "../Option"], function (require, expor
             _this.style = TradingModule.defaultHideSidebar;
             _this.allowSymbolChange = TradingModule.defaultAllowSymbolChange;
             _this.saveImage = TradingModule.defaultSaveImage;
+            _this.studies = TradingModule.defaultStudies;
             _this.refreshInterval = 0;
             _this.type = 'tradingview';
             _this.setOptions(options, false);
@@ -43,6 +44,7 @@ define(["require", "exports", "./Module", "../Option"], function (require, expor
                 style: this.style,
                 allowSymbolChange: this.allowSymbolChange,
                 saveImage: this.saveImage,
+                studies: this.studies,
             };
         };
         TradingModule.prototype.getLink = function () {
@@ -109,6 +111,10 @@ define(["require", "exports", "./Module", "../Option"], function (require, expor
                     new Option_1.OptionValueLabel('5', 'Kagi'),
                     new Option_1.OptionValueLabel('6', 'Point and figures'),
                 ]),
+                new Option_1.Option('studies', 'select_multiple', 'Studies', TradingModule.defaultStudies, [
+                    new Option_1.OptionValueLabel('RSI@tv-basicstudies', 'Relative Strengh index'),
+                    new Option_1.OptionValueLabel('ACCD@tv-basicstudies', 'Accumulation/Distribution'),
+                ]),
                 new Option_1.Option('hideTopbar', 'check', 'Hide top bar', TradingModule.defaultHideTopbar),
                 new Option_1.Option('hideSidebar', 'check', 'Hide side bar', TradingModule.defaultHideSidebar),
                 new Option_1.Option('saveImage', 'check', 'Save image button', TradingModule.defaultSaveImage),
@@ -138,6 +144,7 @@ define(["require", "exports", "./Module", "../Option"], function (require, expor
                 "allow_symbol_change": this.allowSymbolChange,
                 "show_popup_button": false,
                 "hideideas": true,
+                "studies": this.studies,
             };
             console.log(config.backgroundColor);
             if (this.hideTopbar)
@@ -183,6 +190,7 @@ define(["require", "exports", "./Module", "../Option"], function (require, expor
         TradingModule.defaultAllowSymbolChange = false;
         TradingModule.defaultSaveImage = false;
         TradingModule.defaultStyle = '1';
+        TradingModule.defaultStudies = [];
         return TradingModule;
     }(Module_1.Module));
     exports.TradingModule = TradingModule;
